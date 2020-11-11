@@ -6,5 +6,7 @@ import java.util.List;
 public interface PisoService {
 
     List<Piso> findAll();
+    
+    Piso save(Piso piso);
 
 }

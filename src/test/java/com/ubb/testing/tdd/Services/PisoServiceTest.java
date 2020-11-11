@@ -44,5 +44,28 @@ public class PisoServiceTest {
                 () -> assertEquals("Piso 4", pisosFromRepository.get(3).getNombre())
         );
     }
+    
+    @Test
+    public void siSeInvocaSavePisoYAgregoUnPisoDebeRetornarElPisoAgregado() {
+    	
+    	Piso piso1 = new Piso("Piso 1", "Habilitado", 15);
+    	
+    	when(pisoRepository.save(piso1)).thenReturn(piso1);
+    	
+    	assertEquals(piso1, pisoServiceImpl.save(piso1));
+    	
+    }
+    
+    @Test
+    public void siSeInvocaSavePisoYAgregoUnPisoDebeRetornarUnPisoErroneo() {
+    	
+    	Piso piso1 = new Piso("Piso 1", "Habilitado", 15);
+    	Piso piso2 = new Piso("Piso 2", "Ocupado", 20);
+    	when(pisoRepository.save(piso2)).thenReturn(piso2);
+    	
+    	assertNotEquals(piso1, pisoServiceImpl.save(piso2));
+    	
+    }
+
 
 }

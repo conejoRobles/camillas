@@ -19,5 +19,10 @@ public class PisoServiceImpl implements PisoService {
         return pisoRepository.findAll();
     }
 
+	@Override
+	public Piso save(Piso piso) {
+		return pisoRepository.save(piso);
+	}
+
 
 }
