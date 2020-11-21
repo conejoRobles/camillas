@@ -23,6 +23,10 @@ public class PisoServiceImpl implements PisoService {
 	public Piso save(Piso piso) {
 		return pisoRepository.save(piso);
 	}
-
-
+	
+	@Override
+    @Transactional(readOnly = true)
+    public Piso findById(long id) {
+        return pisoRepository.findById(id).orElse(null);
+    }
 }

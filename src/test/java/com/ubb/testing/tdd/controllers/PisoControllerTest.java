@@ -1,6 +1,9 @@
 package com.ubb.testing.tdd.controllers;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ubb.testing.tdd.Entities.Piso;
@@ -13,12 +16,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.json.JacksonTester;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
@@ -33,12 +40,12 @@ public class PisoControllerTest {
 	
 	@Mock
 	private PisoServiceImpl pisoService;
-	
-    private JacksonTester<Piso> jsonPiso;
-	
+
+    
 	@InjectMocks
 	private PisoController pisoController;
 	
+	private JacksonTester<Piso> jsonPiso;
 	
 	@BeforeEach
 	void setup() {
@@ -51,17 +58,15 @@ public class PisoControllerTest {
 	void siSeInvocaCreatePisoDebeRetornarLaRespuestaConElObjetoCreado() throws Exception{
 		//given
 		Piso pisoCreate= new Piso("Piso 1", "Habilitado", 25);
-		given(pisoService.save(pisoCreate)).willReturn(pisoCreate);
-		
-		ObjectMapper mapper = new ObjectMapper();
-		 String newPisoAsJSON = mapper.writeValueAsString(pisoCreate);
-		
-		this.mockMvc.perform(post("/api/piso/")
-			.content(newPisoAsJSON).accept(MediaType.APPLICATION_JSON_VALUE)
-			.contentType(MediaType.APPLICATION_JSON_VALUE))
-			.andExpect(status().isOk());
-		//en primera instancia devuelve un 404 porque la funcion del crear piso no esta creada
-				
+		MockHttpServletResponse response = mockMvc.perform(
+				post("/api/piso")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(jsonPiso.write(pisoCreate).getJson()))
+				.andReturn().getResponse();
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+		assertThat(response.equals(pisoCreate));		
 	}
 	
+
+
 }

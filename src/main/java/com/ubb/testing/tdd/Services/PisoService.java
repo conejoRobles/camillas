@@ -9,4 +9,6 @@ public interface PisoService {
     
     Piso save(Piso piso);
 
+	Piso findById(long id);
+
 }
