@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.NestedServletException;
 
 import com.ubb.testing.tdd.Entities.Piso;
 import com.ubb.testing.tdd.Services.PisoService;
+
+import javassist.NotFoundException;
 
 @RestController
 @RequestMapping("/api")
@@ -24,6 +27,10 @@ public class PisoController {
 	@PostMapping("/piso")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Piso createPiso(@RequestBody Piso piso) throws Exception{
+	
+		if(piso.getNombre().equals("") || piso.getEstado().equals("") || piso.getNroHabitaciones()==0) {
+			throw new NestedServletException("El piso no debe ser vacio");
+		}
 		try {
 			pisoService.save(piso);
 		} catch(DataAccessException e){
