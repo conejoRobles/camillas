@@ -1,14 +1,19 @@
 package com.ubb.testing.tdd.Services;
+
 import com.ubb.testing.tdd.Entities.Piso;
+import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Repository.PisoRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -23,26 +28,62 @@ public class PisoServiceTest {
     @InjectMocks
     private PisoServiceImpl pisoServiceImpl;
 
-    @Test
-    public void siSeInvocaFindAllPisosYExistenPisosHabilitadosDebeRetornarLaListaDePisos(){
-        //Arrange
-        List<Piso> pisosFromRepository;
-        ArrayList<Piso> listPisos = new ArrayList<>();
-        listPisos.add(new Piso("Piso 1", "Habilitado", 2));
-        listPisos.add(new Piso("Piso 2", "Ocupado", 1));
-        listPisos.add(new Piso("Piso 3", "En sanitización", 1));
-        listPisos.add(new Piso("Piso 4", "Habilitado", 1));
+    List<Piso> pisosFromService;
+    ArrayList<Piso> listPisos;
+    long ID_PISO_BUSCAR = 1;
 
+    @BeforeEach
+    void setup() {
+        listPisos = new ArrayList<>();
+    }
+
+    @Test
+    public void siSeInvocaFindAllPisosYExistenPisosHabilitadosDebeRetornarLaListaDePisos() {
+        //Arrange
+        listPisos.add(new Piso(1, "Piso 1", "Habilitado", 2));
+        listPisos.add(new Piso(2, "Piso 2", "Ocupado", 1));
+        listPisos.add(new Piso(3, "Piso 3", "En preparación", 1));
+        listPisos.add(new Piso(4, "Piso 4", "Habilitado", 1));
         when(pisoRepository.findAll()).thenReturn(listPisos);
 
-        pisosFromRepository = pisoServiceImpl.findAll();
+        //Act
+        pisosFromService = pisoServiceImpl.findAll();
 
-        assertNotNull(pisosFromRepository);
-        assertEquals(pisosFromRepository.size(), listPisos.size());
+        //Assert
+        assertNotNull(pisosFromService);
+        assertEquals(pisosFromService.size(), listPisos.size());
         assertAll("pisosFromRepository",
-                () -> assertEquals("Piso 1", pisosFromRepository.get(0).getNombre()),
-                () -> assertEquals("Piso 4", pisosFromRepository.get(3).getNombre())
+                () -> assertEquals("Piso 1", pisosFromService.get(0).getNombre()),
+                () -> assertEquals("Piso 4", pisosFromService.get(3).getNombre())
         );
     }
+
+    @Test
+    public void siSeInvocaFindAllPisosYNoExistenNingunPisoHabilitadoDebeRetornarUnaListaVacia() {
+        when(pisoRepository.findAll()).thenReturn(listPisos);
+        pisosFromService = pisoServiceImpl.findAll();
+        assertNotNull(pisosFromService);
+        assertEquals(pisosFromService.size(), listPisos.size());
+    }
+
+    @Test
+    public void siSeInvocaFindByIdYExisteElPisoDebeRetornarElPisoEncontrado() throws PisoNotFoundException {
+        Piso piso = new Piso(1, "Piso 1", "Habilitado", 2);
+        Optional<Piso> pisoFromService;
+
+        when(pisoRepository.findById(ID_PISO_BUSCAR)).thenReturn(Optional.of(piso));
+
+        pisoFromService = pisoServiceImpl.findById(ID_PISO_BUSCAR);
+
+        assertNotNull(pisoFromService.get());
+        assertEquals(piso, pisoFromService.get());
+    }
+
+    @Test
+    public void siSeInvocaFindByIdYNoExisteElPisoDebeLanzarNoPisoFoundException() {
+        when(pisoRepository.findById(ID_PISO_BUSCAR)).thenReturn(Optional.empty());
+        assertThrows(PisoNotFoundException.class, () -> pisoServiceImpl.findById(ID_PISO_BUSCAR));
+    }
+
 
 }

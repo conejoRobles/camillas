@@ -3,11 +3,12 @@ package com.ubb.testing.tdd.Entities;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "pisos")
 public class Piso {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String nombre;
 
@@ -18,17 +19,18 @@ public class Piso {
     public Piso() {
     }
 
-    public Piso(String nombre, String estado, int nroHabitaciones) {
+    public Piso(Integer id, String nombre, String estado, int nroHabitaciones) {
+        this.id = id;
         this.nombre = nombre;
         this.estado = estado;
         this.nroHabitaciones = nroHabitaciones;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
