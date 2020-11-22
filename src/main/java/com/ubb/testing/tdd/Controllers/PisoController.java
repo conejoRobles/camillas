@@ -34,4 +34,19 @@ public class PisoController {
         }
     }
 
+    @PostMapping("/piso")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Piso createPiso(@RequestBody Piso piso) throws Exception{
+	
+		if(piso.getNombre().equals("") || piso.getEstado().equals("") || piso.getNroHabitaciones()==0) {
+			throw new NestedServletException("El piso no debe ser vacio");
+		}
+		try {
+			pisoService.save(piso);
+		} catch(DataAccessException e){
+			return null;
+		}
+		
+		return piso;
+	}
 }
