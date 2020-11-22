@@ -9,6 +9,10 @@ import java.util.Optional;
 public interface PisoService {
 
     List<Piso> findAll();
+    
+    Piso save(Piso piso);
+
+	Piso findById(long id);
 
     Piso findById(long id) throws PisoNotFoundException;
 

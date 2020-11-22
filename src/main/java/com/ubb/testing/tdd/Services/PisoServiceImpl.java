@@ -22,11 +22,14 @@ public class PisoServiceImpl implements PisoService {
         return pisoRepository.findAll();
     }
 
-    @Override
+	@Override
+	public Piso save(Piso piso) {
+		return pisoRepository.save(piso);
+	}
+	
+	@Override
     @Transactional(readOnly = true)
-    public Piso findById(long id) throws PisoNotFoundException {
-        Optional<Piso> pisoFromDB = pisoRepository.findById(id);
-        if (pisoFromDB.isPresent()) return pisoFromDB.get();
-        throw new PisoNotFoundException();
+    public Piso findById(long id) {
+        return pisoRepository.findById(id).orElse(null);
     }
 }
