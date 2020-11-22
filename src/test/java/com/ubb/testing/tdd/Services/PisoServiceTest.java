@@ -69,14 +69,14 @@ public class PisoServiceTest {
     @Test
     public void siSeInvocaFindByIdYExisteElPisoDebeRetornarElPisoEncontrado() throws PisoNotFoundException {
         Piso piso = new Piso(1, "Piso 1", "Habilitado", 2);
-        Optional<Piso> pisoFromService;
+        Piso pisoFromService;
 
         when(pisoRepository.findById(ID_PISO_BUSCAR)).thenReturn(Optional.of(piso));
 
         pisoFromService = pisoServiceImpl.findById(ID_PISO_BUSCAR);
 
-        assertNotNull(pisoFromService.get());
-        assertEquals(piso, pisoFromService.get());
+        assertNotNull(pisoFromService);
+        assertEquals(piso, pisoFromService);
     }
 
     @Test

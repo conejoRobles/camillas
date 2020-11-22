@@ -24,9 +24,9 @@ public class PisoServiceImpl implements PisoService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Piso> findById(long id) throws PisoNotFoundException {
+    public Piso findById(long id) throws PisoNotFoundException {
         Optional<Piso> pisoFromDB = pisoRepository.findById(id);
-        if (pisoFromDB.isPresent()) return pisoFromDB;
+        if (pisoFromDB.isPresent()) return pisoFromDB.get();
         throw new PisoNotFoundException();
     }
 }
