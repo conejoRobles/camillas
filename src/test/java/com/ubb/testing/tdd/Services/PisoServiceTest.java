@@ -18,7 +18,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
 public class PisoServiceTest {
 
@@ -30,7 +29,7 @@ public class PisoServiceTest {
 
     List<Piso> pisosFromService;
     ArrayList<Piso> listPisos;
-    long ID_PISO_BUSCAR = 1;
+    Integer ID_PISO_BUSCAR = 1;
 
     @BeforeEach
     void setup() {
@@ -39,23 +38,43 @@ public class PisoServiceTest {
 
     @Test
     public void siSeInvocaFindAllPisosYExistenPisosHabilitadosDebeRetornarLaListaDePisos() {
-        //Arrange
+        // Arrange
         listPisos.add(new Piso(1, "Piso 1", "Habilitado", 2));
         listPisos.add(new Piso(2, "Piso 2", "Ocupado", 1));
         listPisos.add(new Piso(3, "Piso 3", "En preparación", 1));
         listPisos.add(new Piso(4, "Piso 4", "Habilitado", 1));
         when(pisoRepository.findAll()).thenReturn(listPisos);
 
-        //Act
+        // Act
         pisosFromService = pisoServiceImpl.findAll();
 
-        //Assert
+        // Assert
         assertNotNull(pisosFromService);
         assertEquals(pisosFromService.size(), listPisos.size());
-        assertAll("pisosFromRepository",
-                () -> assertEquals("Piso 1", pisosFromService.get(0).getNombre()),
-                () -> assertEquals("Piso 4", pisosFromService.get(3).getNombre())
-        );
+        assertAll("pisosFromRepository", () -> assertEquals("Piso 1", pisosFromService.get(0).getNombre()),
+                () -> assertEquals("Piso 4", pisosFromService.get(3).getNombre()));
+    }
+
+    @Test
+    public void siSeInvocaSavePisoYAgregoUnPisoDebeRetornarElPisoAgregado() {
+
+        Piso piso1 = new Piso(1, "Piso 1", "Habilitado", 15);
+
+        when(pisoRepository.save(piso1)).thenReturn(piso1);
+
+        assertEquals(piso1, pisoServiceImpl.save(piso1));
+
+    }
+
+    @Test
+    public void siSeInvocaSavePisoYAgregoUnPisoDebeRetornarUnPisoErroneo() {
+
+        Piso piso1 = new Piso(1, "Piso 1", "Habilitado", 15);
+        Piso piso2 = new Piso(1, "Piso 2", "Ocupado", 20);
+        when(pisoRepository.save(piso2)).thenReturn(piso2);
+
+        assertNotEquals(piso1, pisoServiceImpl.save(piso2));
+
     }
 
     @Test
@@ -85,5 +104,39 @@ public class PisoServiceTest {
         assertThrows(PisoNotFoundException.class, () -> pisoServiceImpl.findById(ID_PISO_BUSCAR));
     }
 
+    @Test
+    public void siSeEditaUnPisoExitosamenteRetornaElPisoConLosNuevosValores() {
+
+        Piso piso1 = new Piso(1, "Piso 1", "Habilitado", 2);
+        String nuevoNombre = "Primer Piso";
+        String nuevoEstado = "Deshabilitado";
+        int nuevoNumeroDeHabitaciones = 20;
+        when(pisoRepository.save(piso1)).thenReturn(piso1);
+
+        piso1.setNombre(nuevoNombre);
+        piso1.setEstado(nuevoEstado);
+        piso1.setNroHabitaciones(nuevoNumeroDeHabitaciones);
+
+        assertAll("Verificando todos los cambios del piso",
+                () -> assertEquals(nuevoNombre, pisoServiceImpl.edit(piso1).getNombre()),
+                () -> assertEquals(nuevoEstado, pisoServiceImpl.edit(piso1).getEstado()),
+                () -> assertEquals(nuevoNumeroDeHabitaciones, pisoServiceImpl.edit(piso1).getNroHabitaciones()));
+    }
+
+    @Test
+    public void siSeEditaUnPisoYNoExisteRetornaNull() {
+
+        Piso piso = new Piso();
+        String nuevoNombre = "Primer Piso";
+        String nuevoEstado = "Deshabilitado";
+        int nuevoNumeroDeHabitaciones = 20;
+        when(pisoRepository.findById(piso.getId())).thenReturn(null);
+
+        piso.setNombre(nuevoNombre);
+        piso.setEstado(nuevoEstado);
+        piso.setNroHabitaciones(nuevoNumeroDeHabitaciones);
+
+        assertNull(pisoServiceImpl.edit(piso));
+    }
 
 }

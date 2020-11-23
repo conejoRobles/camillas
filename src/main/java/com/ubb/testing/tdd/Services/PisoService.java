@@ -10,6 +10,10 @@ public interface PisoService {
 
     List<Piso> findAll();
 
-    Piso findById(long id) throws PisoNotFoundException;
+    Piso save(Piso piso);
+
+    Piso edit(Piso piso);
+
+    Piso findById(Integer id) throws PisoNotFoundException;
 
 }

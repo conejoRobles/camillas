@@ -25,6 +25,7 @@ import java.util.Optional;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ExtendWith(MockitoExtension.class)
 public class PisoControllerTest {
@@ -49,7 +50,7 @@ public class PisoControllerTest {
 
     @Test
     void siSeInvocaFindAllPisosYExistenPisosHabilitadosDebeRetornarListaConLosPisos() throws Exception {
-        //Given
+        // Given
         ArrayList<Piso> pisosFromService = new ArrayList<>();
         pisosFromService.add(new Piso(1, "Piso 1", "Habilitado", 2));
         pisosFromService.add(new Piso(2, "Piso 2", "Ocupado", 1));
@@ -57,11 +58,9 @@ public class PisoControllerTest {
 
         given(pisoService.findAll()).willReturn(pisosFromService);
 
-        //When
-        MockHttpServletResponse response = mockMvc.perform(
-                get("/pisos/findAll")
-                        .accept(MediaType.APPLICATION_JSON)
-        ).andReturn().getResponse();
+        // When
+        MockHttpServletResponse response = mockMvc.perform(get("/pisos/findAll").accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEqualTo(jsonListPiso.write(pisosFromService).getJson());
@@ -72,9 +71,8 @@ public class PisoControllerTest {
         ArrayList<Piso> pisoFromService = new ArrayList<>();
         given(pisoService.findAll()).willReturn(pisoFromService);
 
-        MockHttpServletResponse response = mockMvc.perform(
-                get("/pisos/findAll").accept(MediaType.APPLICATION_JSON)
-        ).andReturn().getResponse();
+        MockHttpServletResponse response = mockMvc.perform(get("/pisos/findAll").accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEqualTo(jsonListPiso.write(pisoFromService).getJson());
@@ -82,37 +80,63 @@ public class PisoControllerTest {
 
     @Test
     void siSeInvocaPisoFindByIdYExisteElPisoDebeRetonarElPisoEncontrado() throws Exception {
-        //Given
+        // Given
         Piso pisoFromService = new Piso(1, "Piso 1", "Habilitado", 2);
         given(pisoService.findById(1)).willReturn(pisoFromService);
 
-        //When
-        MockHttpServletResponse response = mockMvc.perform(
-                get("/pisos/findById/1")
-                        .accept(MediaType.APPLICATION_JSON)
-        ).andReturn().getResponse();
+        // When
+        MockHttpServletResponse response = mockMvc.perform(get("/pisos/findById/1").accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString()).isEqualTo(
-                jsonPiso.write(pisoFromService).getJson()
-        );
+        assertThat(response.getContentAsString()).isEqualTo(jsonPiso.write(pisoFromService).getJson());
     }
 
     @Test
     void siSeInvocaPisoFindByIdYNoExisteDebeRetonarStatusNotFound() throws Exception {
-        //Given
+        // Given
         given(pisoService.findById(1)).willThrow(new PisoNotFoundException());
 
-        //When
-        MockHttpServletResponse response = mockMvc.perform(
-                get("/pisos/findById/1")
-                        .accept(MediaType.APPLICATION_JSON)
-        ).andReturn().getResponse();
+        // When
+        MockHttpServletResponse response = mockMvc.perform(get("/pisos/findById/1").accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
         assertThat(response.getContentAsString()).isEmpty();
     }
 
+    @Test
+    void siSeInvocaCreatePisoDebeRetornarLaRespuestaConElObjetoCreado() throws Exception {
+        // given
+
+        Piso pisoCreate = new Piso(1, "Piso 1", "Habilitado", 25);
+        MockHttpServletResponse response = mockMvc.perform(post("/pisos/piso").contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPiso.write(pisoCreate).getJson())).andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+        assertThat(response.equals(pisoCreate));
+    }
+
+    @Test
+    void siSeInvocaEditPisoDebeRetornarLaRespuestaConElObjetoEditado() throws Exception {
+        // given
+
+        Piso piso = new Piso(1, "Piso 1", "Habilitado", 25);
+
+        String nuevoNombre = "Primer Piso";
+        String nuevoEstado = "Deshabilitado";
+        int nuevoNumeroDeHabitaciones = 20;
+
+        piso.setNombre(nuevoNombre);
+        piso.setEstado(nuevoEstado);
+        piso.setNroHabitaciones(nuevoNumeroDeHabitaciones);
+
+        MockHttpServletResponse response = mockMvc.perform(
+                post("/pisos/editPiso").contentType(MediaType.APPLICATION_JSON).content(jsonPiso.write(piso).getJson()))
+                .andReturn().getResponse();
+
+        assertThat(response.equals(piso));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
 }
