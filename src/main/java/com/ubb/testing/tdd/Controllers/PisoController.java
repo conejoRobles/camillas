@@ -54,4 +54,16 @@ public class PisoController {
 
         return piso;
     }
+
+    @PostMapping("/editPiso")
+    @ResponseStatus(HttpStatus.OK)
+    public Piso editPiso(@RequestBody Piso piso) throws Exception {
+
+        if (piso != null) {
+            if (pisoService.edit(piso) != null) {
+                return pisoService.edit(piso);
+            }
+        }
+        return null;
+    }
 }
