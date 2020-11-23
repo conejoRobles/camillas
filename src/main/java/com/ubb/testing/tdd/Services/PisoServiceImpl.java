@@ -49,11 +49,11 @@ public class PisoServiceImpl implements PisoService {
 
     @Override
     public void deleteById(Integer id) throws PisoNotFoundException {
-        Optional<Piso> pisoFromDB = pisoRepository.findById(id);
-        if(pisoFromDB.isPresent()){
-            pisoRepository.deleteById(id);
+        Piso pisoFromDB = findById(id);
+        if(pisoFromDB!=null){
+             pisoRepository.deleteById(id);
         }else{
-            throw new PisoNotFoundException();
+             throw new PisoNotFoundException();
         }
     }
 }
