@@ -16,4 +16,7 @@ public interface PisoService {
 
     Piso findById(Integer id) throws PisoNotFoundException;
 
+    void deleteById(Integer id) throws PisoNotFoundException;
+
+
 }

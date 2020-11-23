@@ -46,4 +46,14 @@ public class PisoServiceImpl implements PisoService {
         }
         return null;
     }
+
+    @Override
+    public void deleteById(Integer id) throws PisoNotFoundException {
+        Optional<Piso> pisoFromDB = pisoRepository.findById(id);
+        if(pisoFromDB.isPresent()){
+            pisoRepository.deleteById(id);
+        }else{
+            throw new PisoNotFoundException();
+        }
+    }
 }

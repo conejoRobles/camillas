@@ -3,6 +3,8 @@ package com.ubb.testing.tdd.Services;
 import com.ubb.testing.tdd.Entities.Piso;
 import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Repository.PisoRepository;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -138,5 +140,20 @@ public class PisoServiceTest {
 
         assertNull(pisoServiceImpl.edit(piso));
     }
+
+    @Test
+    public void siSeInvocaDeleteByIdYExisteElPisoDebeEliminarlo() throws PisoNotFoundException {
+        Piso piso = new Piso(1, "Piso 1", "Habilitado", 2);
+        when(pisoRepository.findById(ID_PISO_BUSCAR)).thenReturn(Optional.of(piso));
+        pisoServiceImpl.deleteById(1);
+        verify(pisoRepository,times(1)).deleteById(1);
+    }
+
+    @Test
+    public void siSeInvocaDeleteByIdYNoExisteElPisoDebeLanzarNoPisoFoundException() {
+        when(pisoRepository.findById(ID_PISO_BUSCAR)).thenReturn(Optional.empty());
+        assertThrows(PisoNotFoundException.class, () -> pisoServiceImpl.deleteById(ID_PISO_BUSCAR));
+    }
+
 
 }
