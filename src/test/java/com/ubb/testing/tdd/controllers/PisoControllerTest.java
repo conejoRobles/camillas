@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ubb.testing.tdd.Entities.Piso;
 
 import com.ubb.testing.tdd.Services.PisoServiceImpl;
-import com.ubb.testing.tdd.controller.PisoController;
+import com.ubb.testing.tdd.Controllers.PisoController;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,30 +55,31 @@ public class PisoControllerTest {
 	void siSeInvocaCreatePisoDebeRetornarLaRespuestaConElObjetoCreado() throws Exception {
 		// given
 
-		Piso pisoCreate = new Piso("Piso 1", "Habilitado", 25);
-		MockHttpServletResponse response = mockMvc.perform(
-				post("/api/piso").contentType(MediaType.APPLICATION_JSON).content(jsonPiso.write(pisoCreate).getJson()))
+		Piso pisoCreate = new Piso(1, "Piso 1", "Habilitado", 25);
+		MockHttpServletResponse response = mockMvc
+				.perform(post("/api/piso").contentType(MediaType.APPLICATION_JSON).content(jsonPiso.write(pisoCreate).getJson()))
 				.andReturn().getResponse();
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
 		assertThat(response.equals(pisoCreate));
 	}
 
-//	@Test()
-//	void siSeInvocaCreatePisoYElPisoYaExisteDebeLanzarLaExcepcion() throws Exception {
-//		// given
-//
-//		Piso pisoCreate1 = new Piso("", "", 0);
-//	
-//
-//		
-//	
-//		String exception = mockMvc.perform(
-//				post("/api/piso").contentType(MediaType.APPLICATION_JSON).content(jsonPiso.write(pisoCreate1).getJson()))
-//				.andReturn().getResolvedException().getMessage();
-//		
-//		assertEquals("El piso no debe ser vacio", exception);
-//		
-//
-//	}
+	// @Test()
+	// void siSeInvocaCreatePisoYElPisoYaExisteDebeLanzarLaExcepcion() throws
+	// Exception {
+	// // given
+	//
+	// Piso pisoCreate1 = new Piso("", "", 0);
+	//
+	//
+	//
+	//
+	// String exception = mockMvc.perform(
+	// post("/api/piso").contentType(MediaType.APPLICATION_JSON).content(jsonPiso.write(pisoCreate1).getJson()))
+	// .andReturn().getResolvedException().getMessage();
+	//
+	// assertEquals("El piso no debe ser vacio", exception);
+	//
+	//
+	// }
 
 }

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import net.bytebuddy.implementation.bytecode.Throw;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -22,14 +24,26 @@ public class PisoServiceImpl implements PisoService {
         return pisoRepository.findAll();
     }
 
-	@Override
-	public Piso save(Piso piso) {
-		return pisoRepository.save(piso);
-	}
-	
-	@Override
+    @Override
+    public Piso save(Piso piso) {
+        return pisoRepository.save(piso);
+    }
+
+    @Override
     @Transactional(readOnly = true)
-    public Piso findById(long id) {
-        return pisoRepository.findById(id).orElse(null);
+    public Piso findById(Integer id) throws PisoNotFoundException {
+        if (pisoRepository.findById(id).orElse(null) != null) {
+            return pisoRepository.findById(id).get();
+        } else {
+            throw new PisoNotFoundException();
+        }
+    }
+
+    @Override
+    public Piso edit(Piso piso) {
+        if (pisoRepository.findById(piso.getId()) != null) {
+            return pisoRepository.save(piso);
+        }
+        return null;
     }
 }
