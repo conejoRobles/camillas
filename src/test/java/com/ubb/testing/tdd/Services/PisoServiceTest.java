@@ -3,8 +3,10 @@ package com.ubb.testing.tdd.Services;
 import com.ubb.testing.tdd.Entities.Piso;
 import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Repository.PisoRepository;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,12 +14,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,57 +53,46 @@ public class PisoServiceTest {
         // Assert
         assertNotNull(pisosFromService);
         assertEquals(pisosFromService.size(), listPisos.size());
-        assertAll("pisosFromRepository", () -> assertEquals("Piso 1", pisosFromService.get(0).getNombre()),
+        assertAll("pisosFromRepository",
+                () -> assertEquals("Piso 1", pisosFromService.get(0).getNombre()),
                 () -> assertEquals("Piso 4", pisosFromService.get(3).getNombre()));
     }
 
     @Test
-    public void siSeInvocaSavePisoYAgregoUnPisoDebeRetornarElPisoAgregado() {
-
-        Piso piso1 = new Piso(1, "Piso 1", "Habilitado", 15);
-
-        when(pisoRepository.save(piso1)).thenReturn(piso1);
-
-        assertEquals(piso1, pisoServiceImpl.save(piso1));
-
-    }
-
-    @Test
-    public void siSeInvocaSavePisoYAgregoUnPisoDebeRetornarUnPisoErroneo() {
-
-        Piso piso1 = new Piso(1, "Piso 1", "Habilitado", 15);
-        Piso piso2 = new Piso(1, "Piso 2", "Ocupado", 20);
-        when(pisoRepository.save(piso2)).thenReturn(piso2);
-
-        assertNotEquals(piso1, pisoServiceImpl.save(piso2));
-
+    public void siSeInvocaFindByIdYNoExisteElPisoDebeLanzarNoPisoFoundException() {
+        // Arrange + Act
+        when(pisoRepository.findById(ID_PISO_BUSCAR)).thenReturn(Optional.empty());
+        // Assert
+        assertThrows(PisoNotFoundException.class, () -> pisoServiceImpl.findById(ID_PISO_BUSCAR));
     }
 
     @Test
     public void siSeInvocaFindAllPisosYNoExistenNingunPisoHabilitadoDebeRetornarUnaListaVacia() {
+        // Arrange
         when(pisoRepository.findAll()).thenReturn(listPisos);
+
+        // Act
         pisosFromService = pisoServiceImpl.findAll();
+
+        // Assert
         assertNotNull(pisosFromService);
-        assertEquals(pisosFromService.size(), listPisos.size());
+        assertEquals(pisosFromService.size(), 0);
     }
 
     @Test
     public void siSeInvocaFindByIdYExisteElPisoDebeRetornarElPisoEncontrado() throws PisoNotFoundException {
+        // Arrange
         Piso piso = new Piso(1, "Piso 1", "Habilitado", 2);
         Piso pisoFromService;
 
         when(pisoRepository.findById(ID_PISO_BUSCAR)).thenReturn(Optional.of(piso));
 
+        // Act
         pisoFromService = pisoServiceImpl.findById(ID_PISO_BUSCAR);
 
+        // Assert
         assertNotNull(pisoFromService);
         assertEquals(piso, pisoFromService);
-    }
-
-    @Test
-    public void siSeInvocaFindByIdYNoExisteElPisoDebeLanzarNoPisoFoundException() {
-        when(pisoRepository.findById(ID_PISO_BUSCAR)).thenReturn(Optional.empty());
-        assertThrows(PisoNotFoundException.class, () -> pisoServiceImpl.findById(ID_PISO_BUSCAR));
     }
 
     @Test
@@ -146,13 +135,35 @@ public class PisoServiceTest {
         Piso piso = new Piso(1, "Piso 1", "Habilitado", 2);
         when(pisoRepository.findById(ID_PISO_BUSCAR)).thenReturn(Optional.of(piso));
         pisoServiceImpl.deleteById(1);
-        verify(pisoRepository,times(1)).deleteById(1);
+        verify(pisoRepository, times(1)).deleteById(1);
     }
 
     @Test
     public void siSeInvocaDeleteByIdYNoExisteElPisoDebeLanzarNoPisoFoundException() {
         when(pisoRepository.findById(ID_PISO_BUSCAR)).thenReturn(Optional.empty());
         assertThrows(PisoNotFoundException.class, () -> pisoServiceImpl.deleteById(ID_PISO_BUSCAR));
+    }
+
+    @Test
+    public void siSeInvocaSavePisoYAgregoUnPisoDebeRetornarElPisoAgregado() {
+
+        Piso piso1 = new Piso(1, "Piso 1", "Habilitado", 15);
+
+        when(pisoRepository.save(piso1)).thenReturn(piso1);
+
+        assertEquals(piso1, pisoServiceImpl.save(piso1));
+
+    }
+
+    @Test
+    public void siSeInvocaSavePisoYAgregoUnPisoDebeRetornarUnPisoErroneo() {
+
+        Piso piso1 = new Piso(1, "Piso 1", "Habilitado", 15);
+        Piso piso2 = new Piso(1, "Piso 2", "Ocupado", 20);
+        when(pisoRepository.save(piso2)).thenReturn(piso2);
+
+        assertNotEquals(piso1, pisoServiceImpl.save(piso2));
+
     }
 
 
