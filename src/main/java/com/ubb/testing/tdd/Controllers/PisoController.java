@@ -56,14 +56,16 @@ public class PisoController {
     }
 
     @PostMapping("/editPiso")
-    @ResponseStatus(HttpStatus.OK)
-    public Piso editPiso(@RequestBody Piso piso) throws Exception {
+    public ResponseEntity<Piso> editPiso(@RequestBody Piso piso) throws Exception {
 
         if (piso != null) {
-            if (pisoService.edit(piso) != null) {
-                return pisoService.edit(piso);
+            Piso aux = pisoService.edit(piso);
+            if (aux != null) {
+                return new ResponseEntity<>(aux, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }
         }
-        return null;
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 }

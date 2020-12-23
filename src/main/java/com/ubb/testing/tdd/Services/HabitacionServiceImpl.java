@@ -23,7 +23,17 @@ public class HabitacionServiceImpl implements HabitacionService {
     @Override
     public Habitacion findById(Long id) throws HabitacionNotFoundException {
         Optional<Habitacion> habitacionFromDb = habitacionRepository.findById(id);
-        if (habitacionFromDb.isPresent()) return habitacionFromDb.get();
-        else throw new HabitacionNotFoundException();
+        if (habitacionFromDb.isPresent())
+            return habitacionFromDb.get();
+        else
+            throw new HabitacionNotFoundException();
+    }
+
+    @Override
+    public Habitacion edit(Habitacion habitacion) {
+        if (habitacionRepository.findById(habitacion.getId()) != null) {
+            return habitacionRepository.save(habitacion);
+        }
+        return null;
     }
 }

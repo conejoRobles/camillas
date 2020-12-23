@@ -17,4 +17,35 @@ public class Habitacion {
     public String getEspecialidad() {
         return especialidad;
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setEspecialidad(String especialidad) {
+        this.especialidad = especialidad;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public int getNroCamasMax() {
+        return nroCamasMax;
+    }
+
+    public void setNroCamasMax(int nroCamasMax) {
+        this.nroCamasMax = nroCamasMax;
+    }
+
+    public Habitacion() {
+    }
 }

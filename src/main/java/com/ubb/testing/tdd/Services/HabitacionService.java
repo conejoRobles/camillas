@@ -9,5 +9,8 @@ import java.util.Optional;
 public interface HabitacionService {
 
     List<Habitacion> findAll();
+
     Habitacion findById(Long id) throws HabitacionNotFoundException;
+
+    Habitacion edit(Habitacion habitacion);
 }

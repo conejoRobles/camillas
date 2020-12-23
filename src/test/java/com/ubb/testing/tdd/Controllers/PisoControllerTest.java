@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.quality.Strictness;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,7 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -123,20 +127,20 @@ public class PisoControllerTest {
         // given
 
         Piso piso = new Piso(1, "Piso 1", "Habilitado", 25);
-
         String nuevoNombre = "Primer Piso";
         String nuevoEstado = "Deshabilitado";
         int nuevoNumeroDeHabitaciones = 20;
-
         piso.setNombre(nuevoNombre);
         piso.setEstado(nuevoEstado);
         piso.setNroHabitaciones(nuevoNumeroDeHabitaciones);
+
+        given(pisoService.edit(any(piso.getClass()))).willReturn(piso);
 
         MockHttpServletResponse response = mockMvc.perform(
                 post("/pisos/editPiso").contentType(MediaType.APPLICATION_JSON).content(jsonPiso.write(piso).getJson()))
                 .andReturn().getResponse();
 
-        assertThat(response.equals(piso));
+        assertThat(response.getContentAsString().equals(jsonPiso.write(piso).getJson()));
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 }

@@ -37,17 +37,17 @@ public class HabitacionServiceTest {
 
     @Test
     public void siSeInvocaFindAllHabitacionesYExistenHabitacionesDisponiblesDebeRetornarUnListaDeHabitaciones() {
-        //Arrange
+        // Arrange
         habitacionesList.add(new Habitacion(1, "Cardiologia", "Disponible", 2));
         habitacionesList.add(new Habitacion(2, "Pediatria", "Disponible", 3));
         habitacionesList.add(new Habitacion(3, "UCI", "Disponible", 6));
         habitacionesList.add(new Habitacion(4, "Urgencias", "Disponible", 5));
         when(habitacionRepository.findAll()).thenReturn(habitacionesList);
 
-        //Act
+        // Act
         habitacionesFromService = habitacionService.findAll();
 
-        //Assert
+        // Assert
         assertNotNull(habitacionesFromService);
         assertEquals(habitacionesFromService.size(), habitacionesList.size());
         assertAll("Verificando que dos elementos de la lista service posean los mismos datos de la lista en arrange",
@@ -60,36 +60,70 @@ public class HabitacionServiceTest {
         // Arrange
         when(habitacionRepository.findAll()).thenReturn(habitacionesList);
 
-        //Act
+        // Act
         habitacionesFromService = habitacionService.findAll();
 
-        //Assert
+        // Assert
         assertNotNull(habitacionesFromService);
         assertEquals(habitacionesFromService.size(), 0);
     }
 
     @Test
     public void siSeInvocaFindByIdYNoExisteHabitacionDebeLanzarHabitacionNotFoundException() {
-        //Arrange + Act
+        // Arrange + Act
         when(habitacionRepository.findById(ID_HABITACION)).thenReturn(Optional.empty());
 
-        //Assert
+        // Assert
         assertThrows(HabitacionNotFoundException.class, () -> habitacionService.findById(ID_HABITACION));
     }
 
     @Test
-    public void siSeInvocaFindBIdYExisteLaHabitacionDebeRetornarLaHabitacionEncontrada() throws HabitacionNotFoundException {
-        //Arrange
-        Habitacion habitacion  = new Habitacion(2, "Cardiologia", "Disponible", 2);
+    public void siSeInvocaFindBIdYExisteLaHabitacionDebeRetornarLaHabitacionEncontrada()
+            throws HabitacionNotFoundException {
+        // Arrange
+        Habitacion habitacion = new Habitacion(2, "Cardiologia", "Disponible", 2);
         Habitacion habitacionFromService;
         when(habitacionRepository.findById(ID_HABITACION)).thenReturn(Optional.of(habitacion));
 
-        //Act
+        // Act
         habitacionFromService = habitacionService.findById(ID_HABITACION);
 
-        //Assert
+        // Assert
         assertNotNull(habitacionFromService);
         assertEquals(habitacion, habitacionFromService);
+    }
+
+    @Test
+    public void siSeEditaUnaHabitacionExitosamenteRetornaLaHabitacionConLosNuevosValores() {
+
+        Habitacion habitacion = new Habitacion(2, "Cardiologia", "Disponible", 2);
+
+        String nuevoNombre = "Urgencias";
+        int nuevoNumeroDeCamas = 20;
+        when(habitacionRepository.save(habitacion)).thenReturn(habitacion);
+
+        habitacion.setEspecialidad(nuevoNombre);
+        habitacion.setNroCamasMax(nuevoNumeroDeCamas);
+
+        assertAll("Verificando todos los cambios del piso",
+                () -> assertEquals(nuevoNombre, habitacionService.edit(habitacion).getEspecialidad()),
+                () -> assertEquals(nuevoNumeroDeCamas, habitacionService.edit(habitacion).getNroCamasMax()));
+    }
+
+    @Test
+    public void siSeEditaUnPisoYNoExisteRetornaNull() {
+
+        Habitacion habitacion = new Habitacion(2, "Cardiologia", "Disponible", 2);
+
+        String nuevoNombre = "Urgencias";
+        int nuevoNumeroDeCamas = 20;
+
+        when(habitacionRepository.findById(habitacion.getId())).thenReturn(null);
+
+        habitacion.setEspecialidad(nuevoNombre);
+        habitacion.setNroCamasMax(nuevoNumeroDeCamas);
+
+        assertNull(habitacionService.edit(habitacion));
     }
 
 }
