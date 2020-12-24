@@ -7,6 +7,7 @@ public class Habitacion {
     private String estado;
     private int nroCamasMax;
 
+    public Habitacion() {}
     public Habitacion(long id, String especialidad, String estado, int nroCamasMax) {
         this.id = id;
         this.especialidad = especialidad;
@@ -17,4 +18,14 @@ public class Habitacion {
     public String getEspecialidad() {
         return especialidad;
     }
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+    
+    
 }

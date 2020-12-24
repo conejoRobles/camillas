@@ -1,6 +1,7 @@
 package com.ubb.testing.tdd.Controllers;
 
 import com.ubb.testing.tdd.Entities.Piso;
+import com.ubb.testing.tdd.Exceptions.PisoAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Services.PisoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,18 +42,18 @@ public class PisoController {
 
     @PostMapping("/piso")
     @ResponseStatus(HttpStatus.CREATED)
-    public Piso createPiso(@RequestBody Piso piso) throws Exception {
+    public Piso createPiso(@RequestBody Piso piso) throws PisoAlreadyExistsException, PisoNotFoundException {
 
-        if (piso.getNombre().equals("") || piso.getEstado().equals("") || piso.getNroHabitaciones() == 0) {
-            throw new NestedServletException("El piso no debe ser vacio");
-        }
+     
         try {
+        	
             pisoService.save(piso);
-        } catch (DataAccessException e) {
+            return piso;
+        } catch (PisoAlreadyExistsException e) {
             return null;
         }
 
-        return piso;
+       
     }
 
     @PostMapping("/editPiso")

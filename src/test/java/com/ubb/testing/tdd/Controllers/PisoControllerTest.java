@@ -1,33 +1,43 @@
 package com.ubb.testing.tdd.Controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.ubb.testing.tdd.Entities.Piso;
+import com.ubb.testing.tdd.Exceptions.PisoAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Services.PisoService;
 import com.ubb.testing.tdd.Services.PisoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class PisoControllerTest {
 
     private MockMvc mockMvc;
@@ -117,6 +127,25 @@ public class PisoControllerTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
         assertThat(response.equals(pisoCreate));
     }
+    
+	@Test()
+	void siSeInvocaCreatePisoYElPisoYaExisteDebeRetornarNotFound() throws Exception {
+		// given
+
+		Piso pisoCreate = new Piso(1, "Piso 1", "Habilitado", 0);
+	
+
+		doThrow(new PisoAlreadyExistsException()).when(pisoService).save(ArgumentMatchers.any(Piso.class));
+
+	
+		MockHttpServletResponse response = mockMvc.perform(
+				post("/api/piso").contentType(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPiso.write(pisoCreate).getJson())).andReturn().getResponse();
+		
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+		
+
+	}
 
     @Test
     void siSeInvocaEditPisoDebeRetornarLaRespuestaConElObjetoEditado() throws Exception {

@@ -1,6 +1,7 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Piso;
+import com.ubb.testing.tdd.Exceptions.PisoAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Repository.PisoRepository;
 
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class PisoServiceTest {
 
     @Mock
@@ -145,24 +149,36 @@ public class PisoServiceTest {
     }
 
     @Test
-    public void siSeInvocaSavePisoYAgregoUnPisoDebeRetornarElPisoAgregado() {
+    public void siSeInvocaSavePisoYAgregoUnPisoDebeRetornarElPisoAgregado() throws PisoNotFoundException, PisoAlreadyExistsException {
 
+    	List<Piso> pisos = new ArrayList<Piso>();
+    	
+    	
         Piso piso1 = new Piso(1, "Piso 1", "Habilitado", 15);
+        Piso piso2 = new Piso(2, "Piso 2", "Habilitado", 29);
+        Piso piso3 = new Piso(3, "Piso 3", "Habilitado", 7);
+        Piso piso4 = new Piso(4, "Piso 4", "Habilitado", 5);
 
-        when(pisoRepository.save(piso1)).thenReturn(piso1);
+        pisos.add(piso1);
+        pisos.add(piso2);
+        pisos.add(piso3);
+    
 
-        assertEquals(piso1, pisoServiceImpl.save(piso1));
+        when(pisoRepository.findAll()).thenReturn(pisos);
+        pisoRepository.save(piso4);
+
+        verify(pisoRepository, times(1)).save(piso4);
 
     }
 
     @Test
-    public void siSeInvocaSavePisoYAgregoUnPisoDebeRetornarUnPisoErroneo() {
+    public void siSeInvocaSavePisoYAgregoUnPisoDebeRetornarUnPisoErroneo() throws PisoNotFoundException, PisoAlreadyExistsException {
 
         Piso piso1 = new Piso(1, "Piso 1", "Habilitado", 15);
         Piso piso2 = new Piso(1, "Piso 2", "Ocupado", 20);
         when(pisoRepository.save(piso2)).thenReturn(piso2);
 
-        assertNotEquals(piso1, pisoServiceImpl.save(piso2));
+        assertNotEquals(piso1, pisoRepository.save(piso2));
 
     }
 

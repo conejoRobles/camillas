@@ -1,6 +1,7 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Habitacion;
+import com.ubb.testing.tdd.Exceptions.HabitacionAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
 import com.ubb.testing.tdd.Repository.HabitacionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,6 +91,22 @@ public class HabitacionServiceTest {
         //Assert
         assertNotNull(habitacionFromService);
         assertEquals(habitacion, habitacionFromService);
+    }
+    
+    @Test
+    public void siSeInvocaSaveAgregaLaHabitacionYRetornaLaHabitacion() throws HabitacionAlreadyExistsException{
+    	//Arrange
+    	
+    	Habitacion habitacion = new Habitacion(30, "Neurologia", "Ocupado", 1);
+    	Habitacion obtenida;
+    	when(habitacionRepository.save(habitacion)).thenReturn(habitacion);
+    	
+    	//Act
+    	obtenida = habitacionRepository.save(habitacion);
+    	
+    	assertEquals(habitacion, obtenida);
+    	
+    	
     }
 
 }

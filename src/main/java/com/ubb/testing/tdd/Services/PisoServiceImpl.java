@@ -1,6 +1,7 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Piso;
+import com.ubb.testing.tdd.Exceptions.PisoAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Repository.PisoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,15 @@ public class PisoServiceImpl implements PisoService {
     }
 
     @Override
-    public Piso save(Piso piso) {
-        return pisoRepository.save(piso);
+    public Piso save(Piso piso) throws PisoNotFoundException, PisoAlreadyExistsException{
+    	
+    	if(findById(piso.getId()) == null) {
+    		System.out.println("te encontré");
+    		   return pisoRepository.save(piso);
+    	}else {
+    		throw new PisoAlreadyExistsException();
+    	}
+     
     }
 
     @Override
