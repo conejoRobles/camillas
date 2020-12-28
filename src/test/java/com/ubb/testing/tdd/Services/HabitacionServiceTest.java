@@ -1,7 +1,9 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Habitacion;
+import com.ubb.testing.tdd.Entities.Piso;
 import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
+import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Repository.HabitacionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class HabitacionServiceTest {
@@ -90,6 +92,21 @@ public class HabitacionServiceTest {
         //Assert
         assertNotNull(habitacionFromService);
         assertEquals(habitacion, habitacionFromService);
+    }
+
+    @Test
+    public void siSeInvocaDeleteByIdYExisteLaHabitacionDebeEliminarlo() throws HabitacionNotFoundException {
+        long id = 2;
+        Habitacion habitacion  = new Habitacion(2, "Cardiologia", "Disponible", 2);
+        when(habitacionRepository.findById(ID_HABITACION)).thenReturn(Optional.of(habitacion));
+        habitacionService.deleteById(id);
+        verify(habitacionRepository, times(1)).deleteById(id);
+    }
+
+    @Test
+    public void siSeInvocaDeleteByIdYNoExisteLaHabitacionDebeLanzarNoPisoFoundException() {
+        when(habitacionRepository.findById(ID_HABITACION)).thenReturn(Optional.empty());
+        assertThrows(HabitacionNotFoundException.class, () -> habitacionService.deleteById(ID_HABITACION));
     }
 
 }

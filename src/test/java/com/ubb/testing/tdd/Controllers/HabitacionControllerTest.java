@@ -2,6 +2,8 @@ package com.ubb.testing.tdd.Controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ubb.testing.tdd.Entities.Habitacion;
+import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
+import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Services.HabitacionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 
 
 import java.io.UnsupportedEncodingException;
@@ -79,5 +83,37 @@ public class HabitacionControllerTest {
         //Then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEqualTo(jsonHabitacion.write(habitacionFromService).getJson());
+    }
+
+    @Test
+    void siSeInvocadeletePisoYNoExisteElPisoDebeLanzarStatusNotFound() throws Exception {
+        //Given
+        long id = 2;
+        doThrow(new HabitacionNotFoundException()).when(habitacionService).deleteById(id);
+        //When
+        MockHttpServletResponse response = mockMvc.perform(
+                get("/habitaciones/deleteById/2")
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(response.getContentAsString()).isEmpty();
+    }
+
+    @Test
+    void siSeInvocaDeletePisoYExisteDebePoderEliminarlo() throws Exception {
+        //Given
+        long id = 2;
+        doNothing().when(habitacionService).deleteById(id);
+        //When
+        MockHttpServletResponse response = mockMvc.perform(
+                get("/habitaciones/deleteById/2")
+                        .accept(MediaType.APPLICATION_JSON)
+        ).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEmpty();
     }
 }

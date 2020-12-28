@@ -10,4 +10,7 @@ public interface HabitacionService {
 
     List<Habitacion> findAll();
     Habitacion findById(Long id) throws HabitacionNotFoundException;
+
+    void deleteById(Long id) throws HabitacionNotFoundException;
+
 }

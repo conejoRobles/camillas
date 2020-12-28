@@ -1,7 +1,9 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Habitacion;
+import com.ubb.testing.tdd.Entities.Piso;
 import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
+import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Repository.HabitacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,5 +27,15 @@ public class HabitacionServiceImpl implements HabitacionService {
         Optional<Habitacion> habitacionFromDb = habitacionRepository.findById(id);
         if (habitacionFromDb.isPresent()) return habitacionFromDb.get();
         else throw new HabitacionNotFoundException();
+    }
+
+    @Override
+    public void deleteById(Long id) throws HabitacionNotFoundException {
+        Optional<Habitacion> habitacionFromDB = habitacionRepository.findById(id);
+        if(habitacionFromDB.isPresent()){
+            habitacionRepository.deleteById(id);
+        }else{
+            throw new HabitacionNotFoundException();
+        }
     }
 }
