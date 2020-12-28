@@ -17,4 +17,6 @@ public interface HabitacionService {
 
     Habitacion save(Habitacion habitacion) throws HabitacionAlreadyExistsException;
 
+    void deleteById(Long id) throws HabitacionNotFoundException;
+
 }

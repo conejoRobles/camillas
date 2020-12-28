@@ -33,6 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -168,5 +169,31 @@ public class PisoControllerTest {
 
         assertThat(response.getContentAsString().equals(jsonPiso.write(piso).getJson()));
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    void siSeInvocadeletePisoYNoExisteElPisoDebeLanzarStatusNotFound() throws Exception {
+        // Given
+        doThrow(new PisoNotFoundException()).when(pisoService).deleteById(1);
+        // When
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/pisos/deleteById/1").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(response.getContentAsString()).isEmpty();
+    }
+
+    @Test
+    void siSeInvocaDeletePisoYExisteDebePoderEliminarlo() throws Exception {
+        // Given
+        doNothing().when(pisoService).deleteById(1);
+        // When
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/pisos/deleteById/1").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEmpty();
     }
 }

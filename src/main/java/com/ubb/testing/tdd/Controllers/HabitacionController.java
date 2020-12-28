@@ -3,6 +3,7 @@ package com.ubb.testing.tdd.Controllers;
 import com.ubb.testing.tdd.Entities.Habitacion;
 import com.ubb.testing.tdd.Exceptions.HabitacionAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
+import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Services.HabitacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -61,4 +62,15 @@ public class HabitacionController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 	}
+
+	@GetMapping("/deleteById/{id}")
+	public ResponseEntity<Void> deletePiso(@PathVariable long id) {
+		try {
+			habitacionService.deleteById(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (HabitacionNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
 }

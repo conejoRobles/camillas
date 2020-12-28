@@ -69,4 +69,14 @@ public class PisoController {
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
+
+    @GetMapping("/deleteById/{id}")
+    public ResponseEntity<Void> deletePiso(@PathVariable Integer id){
+        try {
+            pisoService.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (PisoNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
