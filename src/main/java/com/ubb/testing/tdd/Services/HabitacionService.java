@@ -1,6 +1,7 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Habitacion;
+import com.ubb.testing.tdd.Exceptions.HabitacionAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
 
 import java.util.List;
@@ -13,4 +14,7 @@ public interface HabitacionService {
     Habitacion findById(Long id) throws HabitacionNotFoundException;
 
     Habitacion edit(Habitacion habitacion);
+
+    Habitacion save(Habitacion habitacion) throws HabitacionAlreadyExistsException;
+
 }
