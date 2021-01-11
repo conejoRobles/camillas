@@ -2,11 +2,8 @@ package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Habitacion;
 import com.ubb.testing.tdd.Exceptions.HabitacionAlreadyExistsException;
-import com.ubb.testing.tdd.Entities.Piso;
 import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
-import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Repository.HabitacionRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,18 +26,14 @@ public class HabitacionServiceTest {
     @InjectMocks
     private HabitacionServiceImpl habitacionService;
 
-    List<Habitacion> habitacionesFromService;
-    List<Habitacion> habitacionesList;
+    List<Habitacion> listHabitacionesFromService;
     private Long ID_HABITACION = 2L;
 
-    @BeforeEach
-    void setup() {
-        habitacionesList = new ArrayList<>();
-    }
 
     @Test
     public void siSeInvocaFindAllHabitacionesYExistenHabitacionesDisponiblesDebeRetornarUnListaDeHabitaciones() {
         // Arrange
+        List<Habitacion> habitacionesList = new ArrayList<>();
         habitacionesList.add(new Habitacion(1, "Cardiologia", "Disponible", 2));
         habitacionesList.add(new Habitacion(2, "Pediatria", "Disponible", 3));
         habitacionesList.add(new Habitacion(3, "UCI", "Disponible", 6));
@@ -48,27 +41,28 @@ public class HabitacionServiceTest {
         when(habitacionRepository.findAll()).thenReturn(habitacionesList);
 
         // Act
-        habitacionesFromService = habitacionService.findAll();
+        listHabitacionesFromService = habitacionService.findAll();
 
         // Assert
-        assertNotNull(habitacionesFromService);
-        assertEquals(habitacionesFromService.size(), habitacionesList.size());
+        assertNotNull(listHabitacionesFromService);
+        assertEquals(listHabitacionesFromService.size(), habitacionesList.size());
         assertAll("Verificando que dos elementos de la lista service posean los mismos datos de la lista en arrange",
-                () -> assertEquals("Cardiologia", habitacionesFromService.get(0).getEspecialidad()),
-                () -> assertEquals("Urgencias", habitacionesFromService.get(3).getEspecialidad()));
+                () -> assertEquals("Cardiologia", listHabitacionesFromService.get(0).getEspecialidad()),
+                () -> assertEquals("Urgencias", listHabitacionesFromService.get(3).getEspecialidad()));
     }
 
     @Test
     public void siSeInvocaFindAllHabitacionesYNoExistenDatosDebeRetornarListaVacia() {
+        List<Habitacion> habitacionesList = new ArrayList<>();
         // Arrange
         when(habitacionRepository.findAll()).thenReturn(habitacionesList);
 
         // Act
-        habitacionesFromService = habitacionService.findAll();
+        listHabitacionesFromService = habitacionService.findAll();
 
         // Assert
-        assertNotNull(habitacionesFromService);
-        assertEquals(habitacionesFromService.size(), 0);
+        assertNotNull(listHabitacionesFromService);
+        assertEquals(listHabitacionesFromService.size(), 0);
     }
 
     @Test

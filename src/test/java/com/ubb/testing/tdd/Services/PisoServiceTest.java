@@ -33,7 +33,7 @@ public class PisoServiceTest {
     @InjectMocks
     private PisoServiceImpl pisoServiceImpl;
 
-    List<Piso> pisosFromService;
+    List<Piso> listPisosFromService;
     ArrayList<Piso> listPisos;
     Integer ID_PISO_BUSCAR = 1;
 
@@ -52,14 +52,14 @@ public class PisoServiceTest {
         when(pisoRepository.findAll()).thenReturn(listPisos);
 
         // Act
-        pisosFromService = pisoServiceImpl.findAll();
+        listPisosFromService = pisoServiceImpl.findAll();
 
         // Assert
-        assertNotNull(pisosFromService);
-        assertEquals(pisosFromService.size(), listPisos.size());
+        assertNotNull(listPisosFromService);
+        assertEquals(listPisosFromService.size(), listPisos.size());
         assertAll("pisosFromRepository",
-                () -> assertEquals("Piso 1", pisosFromService.get(0).getNombre()),
-                () -> assertEquals("Piso 4", pisosFromService.get(3).getNombre()));
+                () -> assertEquals("Piso 1", listPisosFromService.get(0).getNombre()),
+                () -> assertEquals("Piso 4", listPisosFromService.get(3).getNombre()));
     }
 
     @Test
@@ -76,11 +76,11 @@ public class PisoServiceTest {
         when(pisoRepository.findAll()).thenReturn(listPisos);
 
         // Act
-        pisosFromService = pisoServiceImpl.findAll();
+        listPisosFromService = pisoServiceImpl.findAll();
 
         // Assert
-        assertNotNull(pisosFromService);
-        assertEquals(pisosFromService.size(), 0);
+        assertNotNull(listPisosFromService);
+        assertEquals(listPisosFromService.size(), 0);
     }
 
     @Test
