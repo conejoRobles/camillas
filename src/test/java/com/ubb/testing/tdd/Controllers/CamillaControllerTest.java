@@ -19,6 +19,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -31,6 +34,8 @@ public class CamillaControllerTest {
 
     @Mock
     private CamillaService camillaService;
+
+    private JacksonTester<List<Camilla>> jsonListCamilla;
 
     private JacksonTester<Camilla> jsonCamilla;
 
@@ -70,5 +75,23 @@ public class CamillaControllerTest {
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
         assertThat(response.getContentAsString()).isEmpty();
+    }
+
+    @Test
+    void siSeInvocaFindAllYExistenCamillasDebeRetornarLaListaDeCamillas() throws Exception {
+        // Given
+        List<Camilla> camillaList = new ArrayList<>();
+        camillaList.add(new Camilla(1, "Camilla Plegable XL", "Libre", 2020));
+        camillaList.add(new Camilla(2, "Camilla Plegable L", "Ocupada", 2018));
+        camillaList.add(new Camilla(3, "Camilla Plegable M", "En mantencion", 2020));
+
+        given(camillaService.findAll()).willReturn(camillaList);
+
+        // When
+        MockHttpServletResponse response = mockMvc.perform(get("/camillas/findAll").accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEqualTo(jsonListCamilla.write(camillaList).getJson());
     }
 }

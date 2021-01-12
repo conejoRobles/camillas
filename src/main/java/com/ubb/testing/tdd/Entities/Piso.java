@@ -3,11 +3,10 @@ package com.ubb.testing.tdd.Entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "pisos")
 public class Piso {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer id;
 
     private String nombre;

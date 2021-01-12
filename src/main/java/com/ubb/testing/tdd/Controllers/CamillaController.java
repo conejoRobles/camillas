@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/camillas")
 public class CamillaController {
@@ -25,5 +27,11 @@ public class CamillaController {
         } catch (CamillaNotFoundException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
+    }
+
+
+    @GetMapping(value = "/findAll")
+    public ResponseEntity<List<Camilla>> findAllPisos() {
+        return new ResponseEntity<>(camillaService.findAll(), HttpStatus.OK);
     }
 }

@@ -3,20 +3,25 @@ package com.ubb.testing.tdd.Entities;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
 public class Camilla {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private int id;
     private String tipo;
     private String estado;
     private int year;
 
     public Camilla() {
+    }
+
+    public Camilla(String tipo, String estado, int year) {
+        this.tipo = tipo;
+        this.estado = estado;
+        this.year = year;
     }
 
     public Camilla(int id, String tipo, String estado, int year) {
@@ -56,5 +61,15 @@ public class Camilla {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    @Override
+    public String toString() {
+        return "Camilla{" +
+                "id=" + id +
+                ", tipo='" + tipo + '\'' +
+                ", estado='" + estado + '\'' +
+                ", year=" + year +
+                '}';
     }
 }

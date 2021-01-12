@@ -1,1 +1,0 @@
-INSERT INTO `pisos` (nombre, estado, nro_habitaciones) VALUES ('PISO 1', 'HABILITADO', 2);

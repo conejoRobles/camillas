@@ -1,6 +1,7 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Camilla;
+import com.ubb.testing.tdd.Entities.Piso;
 import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
 import com.ubb.testing.tdd.Repository.CamillaRepository;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,5 +54,25 @@ public class CamillaServiceTest {
 
         //Assert
         assertThrows(CamillaNotFoundException.class, () -> camillaServiceImpl.findById(ID_CAMILLA_BUSCAR));
+    }
+
+    @Test
+    public void siSeInvocaFindAllYExistenCamillasDebeRetornarLaListaDeCamillas() {
+        // Arrange
+        List<Camilla> camillaList = new ArrayList<>();
+        camillaList.add(new Camilla(1, "Camilla Plegable XL", "Libre", 2020));
+        camillaList.add(new Camilla(2, "Camilla Plegable L", "Ocupada", 2018));
+        camillaList.add(new Camilla(3, "Camilla Plegable M", "En mantencion", 2020));
+        when(camillaRepository.findAll()).thenReturn(camillaList);
+
+        // Act
+        List<Camilla> listCamillasFromService = camillaServiceImpl.findAll();
+
+        // Assert
+        assertNotNull(listCamillasFromService);
+        assertEquals(listCamillasFromService.size(), camillaList.size());
+        assertAll("Verificando objetos",
+                () -> assertEquals("Camilla Plegable XL", listCamillasFromService.get(0).getTipo()),
+                () -> assertEquals("Camilla Plegable M", listCamillasFromService.get(2).getTipo()));
     }
 }

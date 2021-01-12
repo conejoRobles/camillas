@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,5 +23,18 @@ public class CamillaServiceImpl implements CamillaService {
         if (camillaFromDb.isPresent()) return camillaFromDb.get();
         else throw new CamillaNotFoundException();
     }
+
+    @Override
+    @Transactional
+    public void save(Camilla camilla) {
+        camillaRepository.save(camilla);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Camilla> findAll() {
+        return camillaRepository.findAll();
+    }
+
 
 }

@@ -10,7 +10,7 @@ import java.util.Date;
 public class Historial {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private int id;
 
     private Date fechaIngreso;

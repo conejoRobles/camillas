@@ -1,7 +1,14 @@
 package com.ubb.testing.tdd.Entities;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Habitacion {
 
+    @Id
+    @GeneratedValue
     private long id;
     private String especialidad;
     private String estado;
