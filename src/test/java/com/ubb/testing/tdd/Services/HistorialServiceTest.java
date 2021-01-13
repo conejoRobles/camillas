@@ -1,6 +1,9 @@
 package com.ubb.testing.tdd.Services;
 
+import com.ubb.testing.tdd.Entities.Camilla;
 import com.ubb.testing.tdd.Entities.Historial;
+import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
+import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
 import com.ubb.testing.tdd.Exceptions.HistorialNotFoundException;
 import com.ubb.testing.tdd.Repository.HistorialRepository;
 import org.junit.jupiter.api.Test;
@@ -17,7 +20,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -57,5 +60,23 @@ public class HistorialServiceTest {
 
         //Assert
         assertThrows(HistorialNotFoundException.class, () -> historialService.findById(ID_HISTORIAL_BUSCAR));
+    }
+
+    @Test
+    public void siSeInvocaDeleteByIdYExisteElHistorialDebeEliminarlo() throws ParseException, HistorialNotFoundException {
+        SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
+        Date fecIngreso = objSDF.parse("20-01-2021");
+        Date fecSalida = objSDF.parse("25-01-2021");
+        Historial historial = new Historial(ID_HISTORIAL_BUSCAR, fecIngreso, fecSalida);
+        when(historialRepository.findById(ID_HISTORIAL_BUSCAR)).thenReturn(Optional.of(historial));
+        historialService.deleteById(1);
+        verify(historialRepository, times(1)).deleteById(1);
+    }
+
+    @Test
+    public void siSeInvocaDeleteByIdYNoExisteElHistorialDebeLanzarHistorialFoundException() {
+
+        when(historialRepository.findById(ID_HISTORIAL_BUSCAR)).thenReturn(Optional.empty());
+        assertThrows(HistorialNotFoundException.class, () -> historialService.deleteById(ID_HISTORIAL_BUSCAR));
     }
 }

@@ -5,4 +5,6 @@ import com.ubb.testing.tdd.Exceptions.HistorialNotFoundException;
 
 public interface HistorialService {
     Historial findById(int id) throws HistorialNotFoundException;
+
+    void deleteById(int id) throws HistorialNotFoundException;
 }

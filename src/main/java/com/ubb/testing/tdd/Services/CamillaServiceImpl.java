@@ -36,5 +36,15 @@ public class CamillaServiceImpl implements CamillaService {
         return camillaRepository.findAll();
     }
 
+    @Override
+    public void deleteById(int id) throws CamillaNotFoundException {
+        Optional<Camilla> camillaFromDb = camillaRepository.findById(id);
+        if(camillaFromDb.isPresent()){
+            camillaRepository.deleteById(id);
+        }else{
+            throw new CamillaNotFoundException();
+        }
+    }
+
 
 }

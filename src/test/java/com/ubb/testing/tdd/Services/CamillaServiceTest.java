@@ -1,8 +1,10 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Camilla;
+import com.ubb.testing.tdd.Entities.Habitacion;
 import com.ubb.testing.tdd.Entities.Piso;
 import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
+import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
 import com.ubb.testing.tdd.Repository.CamillaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,5 +76,19 @@ public class CamillaServiceTest {
         assertAll("Verificando objetos",
                 () -> assertEquals("Camilla Plegable XL", listCamillasFromService.get(0).getTipo()),
                 () -> assertEquals("Camilla Plegable M", listCamillasFromService.get(2).getTipo()));
+    }
+
+    @Test
+    public void siSeInvocaDeleteByIdYExisteLaCamillaDebeEliminarlo() throws HabitacionNotFoundException, CamillaNotFoundException {
+        Camilla camilla = new Camilla(1, "Camilla Plegable", "Libre", 2020);
+        when(camillaRepository.findById(ID_CAMILLA_BUSCAR)).thenReturn(Optional.of(camilla));
+        camillaServiceImpl.deleteById(1);
+        verify(camillaRepository, times(1)).deleteById(1);
+    }
+
+    @Test
+    public void siSeInvocaDeleteByIdYNoExisteLaCamillaDebeLanzarNoPisoFoundException() {
+        when(camillaRepository.findById(ID_CAMILLA_BUSCAR)).thenReturn(Optional.empty());
+        assertThrows(CamillaNotFoundException.class, () -> camillaServiceImpl.deleteById(ID_CAMILLA_BUSCAR));
     }
 }

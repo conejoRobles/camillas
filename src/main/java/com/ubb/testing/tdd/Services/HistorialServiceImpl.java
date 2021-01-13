@@ -22,4 +22,11 @@ public class HistorialServiceImpl implements HistorialService{
         if (historialRepositoryById.isPresent()) return historialRepositoryById.get();
         else throw new HistorialNotFoundException();
     }
+
+    @Override
+    public void deleteById(int id) throws HistorialNotFoundException {
+        Optional<Historial> historialRepositoryById = historialRepository.findById(id);
+        if (historialRepositoryById.isPresent()) historialRepository.deleteById(id);
+        else throw new HistorialNotFoundException();
+    }
 }

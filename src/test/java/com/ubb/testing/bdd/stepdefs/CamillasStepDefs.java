@@ -5,8 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.ubb.testing.bdd.integrationTests.CucumberSpringContextConfiguration;
+import com.ubb.testing.bdd.CucumberSpringContextConfiguration;
 import com.ubb.testing.tdd.Entities.Camilla;
+import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
 import com.ubb.testing.tdd.Repository.CamillaRepository;
 import com.ubb.testing.tdd.Services.CamillaService;
 import io.cucumber.java.en.Given;
@@ -96,6 +97,31 @@ public class CamillasStepDefs extends CucumberSpringContextConfiguration {
 
         assertNotNull(camillas);
         assertEquals(nrCamillas,camillas.size());
+    }
+
+    @When("elimino una camilla que posee el id {int}")
+    public void elimino_una_camilla_que_posee_el_id(Integer idCamilla) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+
+        testRestTemplate = new TestRestTemplate();
+        responseCamilla = testRestTemplate
+                .exchange(createURLWithPort("/camillas/deleteById/"+idCamilla), HttpMethod.GET,entity,Camilla.class);
+    }
+
+    @Then("obtengo es estado Ok y no lo encuentro con la id {int}")
+    public void obtengo_es_estado_ok_y_no_lo_encuentro_con_la_id(Integer idCamilla) {
+        assertEquals(HttpStatus.OK, responseCamilla.getStatusCode());
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
+        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+
+        testRestTemplate = new TestRestTemplate();
+        responseCamilla = testRestTemplate
+                .exchange(createURLWithPort("/camillas/deleteById/"+idCamilla), HttpMethod.GET,entity,Camilla.class);
+        assertEquals(HttpStatus.NOT_FOUND, responseCamilla.getStatusCode());
     }
 
     private String createURLWithPort(String uri) {

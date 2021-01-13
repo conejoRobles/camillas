@@ -11,3 +11,8 @@ Feature: Servicios asociados a una camilla
     And  existe una camilla; tipo "Plegable M", estado "En mantencion", year 2020
     When solicito todas las camillas
     Then obtengo el estado Ok y 3 camillas
+
+  Scenario: borrar camilla base de datos
+    Given existe una camilla; tipo "Plegable XL", estado "Libre", year 2020
+    When elimino una camilla que posee el id 5
+    Then obtengo es estado Ok y no lo encuentro con la id 5

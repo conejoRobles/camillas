@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ubb.testing.tdd.Entities.Camilla;
 import com.ubb.testing.tdd.Entities.Historial;
 import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
+import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
 import com.ubb.testing.tdd.Exceptions.HistorialNotFoundException;
 import com.ubb.testing.tdd.Services.HistorialService;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,8 @@ import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @ExtendWith(MockitoExtension.class)
@@ -79,6 +82,32 @@ public class HistorialControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(response.getContentAsString()).isEmpty();
+    }
+
+    @Test
+    void siSeInvocadeleteCamillaYNoExisteLaCamillaDebeLanzarStatusNotFound() throws Exception {
+        // Given
+        doThrow(new HistorialNotFoundException()).when(historialService).deleteById(2);
+        // When
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/historial/deleteById/2").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(response.getContentAsString()).isEmpty();
+    }
+
+    @Test
+    void siSeInvocaDeleteCamillaYExisteDebePoderEliminarlo() throws Exception {
+        // Given
+        doNothing().when(historialService).deleteById(2);
+        // When
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/historial/deleteById/2").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEmpty();
     }
 }

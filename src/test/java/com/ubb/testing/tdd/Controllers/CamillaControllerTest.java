@@ -3,6 +3,7 @@ package com.ubb.testing.tdd.Controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ubb.testing.tdd.Entities.Camilla;
 import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
+import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
 import com.ubb.testing.tdd.Services.CamillaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @ExtendWith(MockitoExtension.class)
@@ -93,5 +96,31 @@ public class CamillaControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEqualTo(jsonListCamilla.write(camillaList).getJson());
+    }
+
+    @Test
+    void siSeInvocadeleteCamillaYNoExisteLaCamillaDebeLanzarStatusNotFound() throws Exception {
+        // Given
+        doThrow(new CamillaNotFoundException()).when(camillaService).deleteById(2);
+        // When
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/camillas/deleteById/2").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(response.getContentAsString()).isEmpty();
+    }
+
+    @Test
+    void siSeInvocaDeleteCamillaYExisteDebePoderEliminarlo() throws Exception {
+        // Given
+        doNothing().when(camillaService).deleteById(2);
+        // When
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/camillas/deleteById/2").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEmpty();
     }
 }

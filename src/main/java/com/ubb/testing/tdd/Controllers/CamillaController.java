@@ -2,6 +2,7 @@ package com.ubb.testing.tdd.Controllers;
 
 import com.ubb.testing.tdd.Entities.Camilla;
 import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
+import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Services.CamillaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,5 +34,15 @@ public class CamillaController {
     @GetMapping(value = "/findAll")
     public ResponseEntity<List<Camilla>> findAllPisos() {
         return new ResponseEntity<>(camillaService.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/deleteById/{id}")
+    public ResponseEntity<Void> deletePiso(@PathVariable Integer id){
+        try {
+            camillaService.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (CamillaNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
