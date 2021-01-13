@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class HistorialServiceImpl implements HistorialService{
+public class HistorialServiceImpl implements HistorialService {
 
     @Autowired
     private HistorialRepository historialRepository;
@@ -19,14 +19,28 @@ public class HistorialServiceImpl implements HistorialService{
     @Transactional(readOnly = true)
     public Historial findById(int id) throws HistorialNotFoundException {
         Optional<Historial> historialRepositoryById = historialRepository.findById(id);
-        if (historialRepositoryById.isPresent()) return historialRepositoryById.get();
-        else throw new HistorialNotFoundException();
+        if (historialRepositoryById.isPresent())
+            return historialRepositoryById.get();
+        else
+            throw new HistorialNotFoundException();
     }
 
     @Override
     public void deleteById(int id) throws HistorialNotFoundException {
         Optional<Historial> historialRepositoryById = historialRepository.findById(id);
-        if (historialRepositoryById.isPresent()) historialRepository.deleteById(id);
-        else throw new HistorialNotFoundException();
+        if (historialRepositoryById.isPresent())
+            historialRepository.deleteById(id);
+        else
+            throw new HistorialNotFoundException();
+    }
+
+    @Override
+    public Historial edit(Historial historial) {
+        Optional<Historial> aux = historialRepository.findById(historial.getId());
+        if (aux != null) {
+            return historialRepository.save(historial);
+        }
+        return null;
+
     }
 }

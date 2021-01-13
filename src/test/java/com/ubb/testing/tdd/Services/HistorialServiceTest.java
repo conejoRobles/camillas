@@ -35,8 +35,9 @@ public class HistorialServiceTest {
     public int ID_HISTORIAL_BUSCAR = 1;
 
     @Test
-    public void siSeInvocaFindByIdYExisteHistorialDebeRetornarLaCamillaEncontrada() throws HistorialNotFoundException, ParseException {
-        //Arrange
+    public void siSeInvocaFindByIdYExisteHistorialDebeRetornarLaCamillaEncontrada()
+            throws HistorialNotFoundException, ParseException {
+        // Arrange
         SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
         Date fecIngreso = objSDF.parse("20-01-2021");
         Date fecSalida = objSDF.parse("25-01-2021");
@@ -45,10 +46,10 @@ public class HistorialServiceTest {
         Historial historialFromService;
         when(historialRepository.findById(ID_HISTORIAL_BUSCAR)).thenReturn(Optional.of(historialToFind));
 
-        //Act
+        // Act
         historialFromService = historialService.findById(ID_HISTORIAL_BUSCAR);
 
-        //Assert
+        // Assert
         assertNotNull(historialFromService);
         assertEquals(historialToFind, historialFromService);
     }
@@ -58,12 +59,13 @@ public class HistorialServiceTest {
         // Arrange + Act
         when(historialRepository.findById(ID_HISTORIAL_BUSCAR)).thenReturn(Optional.empty());
 
-        //Assert
+        // Assert
         assertThrows(HistorialNotFoundException.class, () -> historialService.findById(ID_HISTORIAL_BUSCAR));
     }
 
     @Test
-    public void siSeInvocaDeleteByIdYExisteElHistorialDebeEliminarlo() throws ParseException, HistorialNotFoundException {
+    public void siSeInvocaDeleteByIdYExisteElHistorialDebeEliminarlo()
+            throws ParseException, HistorialNotFoundException {
         SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
         Date fecIngreso = objSDF.parse("20-01-2021");
         Date fecSalida = objSDF.parse("25-01-2021");
@@ -78,5 +80,40 @@ public class HistorialServiceTest {
 
         when(historialRepository.findById(ID_HISTORIAL_BUSCAR)).thenReturn(Optional.empty());
         assertThrows(HistorialNotFoundException.class, () -> historialService.deleteById(ID_HISTORIAL_BUSCAR));
+    }
+
+    @Test
+    public void siSeEditaUnHistorialExitosamenteRetornaElHistorialConLosNuevosValores() throws ParseException {
+
+        SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
+        Date fecIngreso = objSDF.parse("20-01-2021");
+        Date newFecIngreso = objSDF.parse("22-01-2021");
+        Date fecSalida = objSDF.parse("25-01-2021");
+        Historial historial = new Historial(ID_HISTORIAL_BUSCAR, fecIngreso, fecSalida);
+
+        when(historialRepository.findById(historial.getId())).thenReturn(Optional.of(historial));
+        when(historialRepository.save(historial)).thenReturn(historial);
+
+        historial.setFechaIngreso(newFecIngreso);
+
+        assertEquals(newFecIngreso, historialService.edit(historial).getFechaIngreso());
+
+    }
+
+    @Test
+    public void siSeEditaUnaHabitacionYNoExisteRetornaNull() throws ParseException {
+
+        SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
+        Date fecIngreso = objSDF.parse("20-01-2021");
+        Date newFecIngreso = objSDF.parse("22-01-2021");
+        Date fecSalida = objSDF.parse("25-01-2021");
+        Historial historial = new Historial(ID_HISTORIAL_BUSCAR, fecIngreso, fecSalida);
+
+        when(historialRepository.findById(historial.getId())).thenReturn(null);
+
+        historial.setFechaIngreso(newFecIngreso);
+
+        assertNull(historialService.edit(historial));
+
     }
 }
