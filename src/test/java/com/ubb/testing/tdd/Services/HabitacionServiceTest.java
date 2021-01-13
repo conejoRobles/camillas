@@ -108,34 +108,32 @@ public class HabitacionServiceTest {
     @Test
     public void siSeEditaUnaHabitacionExitosamenteRetornaLaHabitacionConLosNuevosValores() {
 
-        Habitacion habitacion = new Habitacion(2, "Cardiologia", "Disponible", 2);
+        Habitacion habitacion = new Habitacion(30, "Neurologia", "Ocupado", 1);
 
-        String nuevoNombre = "Urgencias";
-        int nuevoNumeroDeCamas = 20;
+        habitacion.setEspecialidad("Maternidad");
+        habitacion.setNroCamasMax(10);
+
+        when(habitacionRepository.findById(habitacion.getId())).thenReturn(Optional.of(habitacion));
         when(habitacionRepository.save(habitacion)).thenReturn(habitacion);
 
-        habitacion.setEspecialidad(nuevoNombre);
-        habitacion.setNroCamasMax(nuevoNumeroDeCamas);
+        assertAll("Verificar los nuevos valores de la habitacion",
+                () -> assertEquals("Maternidad", habitacionService.edit(habitacion).getEspecialidad()),
+                () -> assertEquals(10, habitacionService.edit(habitacion).getNroCamasMax()));
 
-        assertAll("Verificando todos los cambios del piso",
-                () -> assertEquals(nuevoNombre, habitacionService.edit(habitacion).getEspecialidad()),
-                () -> assertEquals(nuevoNumeroDeCamas, habitacionService.edit(habitacion).getNroCamasMax()));
     }
 
     @Test
-    public void siSeEditaUnPisoYNoExisteRetornaNull() {
+    public void siSeEditaUnaHabitacionYNoExisteRetornaNull() {
 
-        Habitacion habitacion = new Habitacion(2, "Cardiologia", "Disponible", 2);
+        Habitacion habitacion = new Habitacion(30, "Neurologia", "Ocupado", 1);
 
-        String nuevoNombre = "Urgencias";
-        int nuevoNumeroDeCamas = 20;
+        habitacion.setEspecialidad("Maternidad");
+        habitacion.setNroCamasMax(10);
 
         when(habitacionRepository.findById(habitacion.getId())).thenReturn(null);
 
-        habitacion.setEspecialidad(nuevoNombre);
-        habitacion.setNroCamasMax(nuevoNumeroDeCamas);
-
         assertNull(habitacionService.edit(habitacion));
+
     }
 
     @Test

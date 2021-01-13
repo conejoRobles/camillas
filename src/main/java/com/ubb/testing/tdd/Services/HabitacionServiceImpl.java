@@ -34,10 +34,12 @@ public class HabitacionServiceImpl implements HabitacionService {
 
     @Override
     public Habitacion edit(Habitacion habitacion) {
-        if (habitacionRepository.findById(habitacion.getId()) != null) {
+        Optional<Habitacion> aux = habitacionRepository.findById(habitacion.getId());
+        if (aux != null) {
             return habitacionRepository.save(habitacion);
         }
         return null;
+
     }
 
     @Override
