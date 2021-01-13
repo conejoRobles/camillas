@@ -7,8 +7,12 @@ import java.util.List;
 
 public interface CamillaService {
     Camilla findById(int id) throws CamillaNotFoundException;
+
     void save(Camilla camilla);
+
     List<Camilla> findAll();
 
     void deleteById(int i) throws CamillaNotFoundException;
+
+    Camilla edit(Camilla camilla);
 }

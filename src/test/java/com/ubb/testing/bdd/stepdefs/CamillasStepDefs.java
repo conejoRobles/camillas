@@ -23,7 +23,6 @@ import io.cucumber.java.After;
 
 import java.util.List;
 
-
 public class CamillasStepDefs extends CucumberSpringContextConfiguration {
 
     @LocalServerPort
@@ -33,6 +32,9 @@ public class CamillasStepDefs extends CucumberSpringContextConfiguration {
 
     private ResponseEntity<List<Camilla>> responseCamillas;
     private ResponseEntity<Camilla> responseCamilla;
+    private String createURLWithPort(String uri) {
+        return "http://localhost:" + port + uri;
+    }
 
     @Autowired
     private CamillaRepository camillaRepository;
@@ -58,35 +60,35 @@ public class CamillasStepDefs extends CucumberSpringContextConfiguration {
     public void solicito_la_camilla_que_posee_el_id(Integer idCamilla) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
-        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         testRestTemplate = new TestRestTemplate();
-        responseCamilla = testRestTemplate
-                .exchange(createURLWithPort("/camillas/findById/"+idCamilla), HttpMethod.GET,entity,Camilla.class);
+        responseCamilla = testRestTemplate.exchange(createURLWithPort("/camillas/findById/" + idCamilla),
+                HttpMethod.GET, entity, Camilla.class);
     }
 
     @Then("obtengo el estado Ok y la camilla con id {int} y tipo {string}")
     public void obtengo_el_estado_ok_y_la_camilla_con_id_y_tipo(Integer idCamilla, String tipo) {
-    	
-    	assertEquals(HttpStatus.OK, responseCamilla.getStatusCode());
+
+        assertEquals(HttpStatus.OK, responseCamilla.getStatusCode());
 
         camilla = responseCamilla.getBody();
-       
+
         assertNotNull(camilla);
-        assertEquals(idCamilla,camilla.getId());
-        assertEquals(tipo,camilla.getTipo());
+        assertEquals(idCamilla, camilla.getId());
+        assertEquals(tipo, camilla.getTipo());
     }
 
     @When("solicito todas las camillas")
     public void solicito_todas_las_camillas() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
-        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         testRestTemplate = new TestRestTemplate();
-        responseCamillas = testRestTemplate
-                .exchange(createURLWithPort("/camillas/findAll"),HttpMethod.GET,entity,
-                        new ParameterizedTypeReference<List<Camilla>>(){});
+        responseCamillas = testRestTemplate.exchange(createURLWithPort("/camillas/findAll"), HttpMethod.GET, entity,
+                new ParameterizedTypeReference<List<Camilla>>() {
+                });
     }
 
     @Then("obtengo el estado Ok y {int} camillas")
@@ -96,18 +98,18 @@ public class CamillasStepDefs extends CucumberSpringContextConfiguration {
         List<Camilla> camillas = responseCamillas.getBody();
 
         assertNotNull(camillas);
-        assertEquals(nrCamillas,camillas.size());
+        assertEquals(nrCamillas, camillas.size());
     }
 
     @When("elimino una camilla que posee el id {int}")
     public void elimino_una_camilla_que_posee_el_id(Integer idCamilla) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
-        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         testRestTemplate = new TestRestTemplate();
-        responseCamilla = testRestTemplate
-                .exchange(createURLWithPort("/camillas/deleteById/"+idCamilla), HttpMethod.GET,entity,Camilla.class);
+        responseCamilla = testRestTemplate.exchange(createURLWithPort("/camillas/deleteById/" + idCamilla),
+                HttpMethod.GET, entity, Camilla.class);
     }
 
     @Then("obtengo es estado Ok y no lo encuentro con la id {int}")
@@ -116,16 +118,35 @@ public class CamillasStepDefs extends CucumberSpringContextConfiguration {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
-        HttpEntity<String> entity = new HttpEntity<>(null,httpHeaders);
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         testRestTemplate = new TestRestTemplate();
-        responseCamilla = testRestTemplate
-                .exchange(createURLWithPort("/camillas/deleteById/"+idCamilla), HttpMethod.GET,entity,Camilla.class);
+        responseCamilla = testRestTemplate.exchange(createURLWithPort("/camillas/deleteById/" + idCamilla),
+                HttpMethod.GET, entity, Camilla.class);
         assertEquals(HttpStatus.NOT_FOUND, responseCamilla.getStatusCode());
     }
 
-    private String createURLWithPort(String uri) {
-        return "http://localhost:" + port + uri;
+    @When("edito la camilla que posee el id {int}, cambiando el estado a {string}")
+    public void elimino_una_camilla_que_posee_el_id(Integer idCamilla, String newEstado) {
+
+        camilla.setEstado(newEstado);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
+        HttpEntity<Camilla> entity = new HttpEntity<>(camilla, httpHeaders);
+
+        testRestTemplate = new TestRestTemplate();
+        responseCamilla = testRestTemplate.exchange(createURLWithPort("/camillas/editCamilla"),
+                HttpMethod.POST, entity, Camilla.class);
     }
+
+    @Then("obtengo el estado Ok y la camilla con estado {string}")
+    public void obtengo_es_estado_ok_y_no_lo_encuentro_con_la_id(String newEstado) {
+        camilla = responseCamilla.getBody();
+
+        assertEquals(HttpStatus.OK, responseCamilla.getStatusCode());
+        assertEquals(newEstado, camilla.getEstado());
+    }
+
 
 }

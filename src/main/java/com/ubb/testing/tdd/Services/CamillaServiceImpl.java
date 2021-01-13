@@ -20,8 +20,10 @@ public class CamillaServiceImpl implements CamillaService {
     @Transactional(readOnly = true)
     public Camilla findById(int id) throws CamillaNotFoundException {
         Optional<Camilla> camillaFromDb = camillaRepository.findById(id);
-        if (camillaFromDb.isPresent()) return camillaFromDb.get();
-        else throw new CamillaNotFoundException();
+        if (camillaFromDb.isPresent())
+            return camillaFromDb.get();
+        else
+            throw new CamillaNotFoundException();
     }
 
     @Override
@@ -39,12 +41,21 @@ public class CamillaServiceImpl implements CamillaService {
     @Override
     public void deleteById(int id) throws CamillaNotFoundException {
         Optional<Camilla> camillaFromDb = camillaRepository.findById(id);
-        if(camillaFromDb.isPresent()){
+        if (camillaFromDb.isPresent()) {
             camillaRepository.deleteById(id);
-        }else{
+        } else {
             throw new CamillaNotFoundException();
         }
     }
 
+    @Override
+    public Camilla edit(Camilla camilla) {
+        Optional<Camilla> aux = camillaRepository.findById(camilla.getId());
+        if (aux != null) {
+            return camillaRepository.save(camilla);
+        }
+        return null;
+
+    }
 
 }

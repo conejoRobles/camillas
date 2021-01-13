@@ -16,3 +16,9 @@ Feature: Servicios asociados a una camilla
     Given existe una camilla; tipo "Plegable XL", estado "Libre", year 2020
     When elimino una camilla que posee el id 5
     Then obtengo es estado Ok y no lo encuentro con la id 5
+
+  Scenario: editar camilla que existe en la base de datos
+    Given existe una camilla; tipo "Plegable XL", estado "Libre", year 2020
+    When edito la camilla que posee el id 1, cambiando el estado a "Ocupada"
+    Then obtengo el estado Ok y la camilla con estado "Ocupada"
+

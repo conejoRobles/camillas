@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -36,15 +36,15 @@ public class CamillaServiceTest {
 
     @Test
     public void siSeInvocaFindByIdYExisteCamillaDebeRetornarLaCamillaEncontrada() throws CamillaNotFoundException {
-        //Arrange
+        // Arrange
         Camilla camillaToFind = new Camilla(ID_CAMILLA_BUSCAR, "Camilla Plegable", "Libre", 2020);
         Camilla camillaFromService;
         when(camillaRepository.findById(ID_CAMILLA_BUSCAR)).thenReturn(Optional.of(camillaToFind));
 
-        //Act
+        // Act
         camillaFromService = camillaServiceImpl.findById(ID_CAMILLA_BUSCAR);
 
-        //Assert
+        // Assert
         assertNotNull(camillaFromService);
         assertEquals(camillaToFind, camillaFromService);
     }
@@ -54,7 +54,7 @@ public class CamillaServiceTest {
         // Arrange + Act
         when(camillaRepository.findById(ID_CAMILLA_BUSCAR)).thenReturn(Optional.empty());
 
-        //Assert
+        // Assert
         assertThrows(CamillaNotFoundException.class, () -> camillaServiceImpl.findById(ID_CAMILLA_BUSCAR));
     }
 
@@ -79,7 +79,8 @@ public class CamillaServiceTest {
     }
 
     @Test
-    public void siSeInvocaDeleteByIdYExisteLaCamillaDebeEliminarlo() throws HabitacionNotFoundException, CamillaNotFoundException {
+    public void siSeInvocaDeleteByIdYExisteLaCamillaDebeEliminarlo()
+            throws HabitacionNotFoundException, CamillaNotFoundException {
         Camilla camilla = new Camilla(1, "Camilla Plegable", "Libre", 2020);
         when(camillaRepository.findById(ID_CAMILLA_BUSCAR)).thenReturn(Optional.of(camilla));
         camillaServiceImpl.deleteById(1);
@@ -91,4 +92,36 @@ public class CamillaServiceTest {
         when(camillaRepository.findById(ID_CAMILLA_BUSCAR)).thenReturn(Optional.empty());
         assertThrows(CamillaNotFoundException.class, () -> camillaServiceImpl.deleteById(ID_CAMILLA_BUSCAR));
     }
+
+    @Test
+    public void siSeEditaUnaCamillaExitosamenteRetornaLaCamillaConLosNuevosValores() {
+
+        // Arrange
+        Camilla camilla = new Camilla(ID_CAMILLA_BUSCAR, "Camilla Plegable", "Libre", 2020);
+        String newEstado = "Ocupada";
+
+        when(camillaRepository.findById(ID_CAMILLA_BUSCAR)).thenReturn(Optional.of(camilla));
+        when(camillaRepository.save(camilla)).thenReturn(camilla);
+
+        camilla.setEstado(newEstado);
+
+        assertEquals(newEstado, camillaServiceImpl.edit(camilla).getEstado());
+
+    }
+
+    @Test
+    public void siSeEditaUnaCamillaYNoExisteRetornaNull() {
+
+        // Arrange
+        Camilla camilla = new Camilla(ID_CAMILLA_BUSCAR, "Camilla Plegable", "Libre", 2020);
+        String newEstado = "Ocupada";
+
+        when(camillaRepository.findById(ID_CAMILLA_BUSCAR)).thenReturn(null);
+
+        camilla.setEstado(newEstado);
+
+        assertNull(camillaServiceImpl.edit(camilla));
+
+    }
+
 }

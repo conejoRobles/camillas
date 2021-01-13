@@ -24,10 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -58,8 +60,8 @@ public class CamillaControllerTest {
         given(camillaService.findById(1)).willReturn(camillaToFind);
 
         // When
-        MockHttpServletResponse response = mockMvc.perform(get("/camillas/findById/1").accept(MediaType.APPLICATION_JSON))
-                .andReturn().getResponse();
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/camillas/findById/1").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
@@ -72,8 +74,8 @@ public class CamillaControllerTest {
         given(camillaService.findById(1)).willThrow(new CamillaNotFoundException());
 
         // When
-        MockHttpServletResponse response = mockMvc.perform(get("/camillas/findById/1").accept(MediaType.APPLICATION_JSON))
-                .andReturn().getResponse();
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/camillas/findById/1").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
@@ -122,5 +124,40 @@ public class CamillaControllerTest {
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEmpty();
+    }
+
+    @Test
+    void siSeInvocaEditHistorialDebeRetornarLaRespuestaConElObjetoEditado() throws Exception {
+        // Given
+        Camilla camilla = new Camilla(1, "Camilla Plegable", "Libre", 2020);
+        String newEstado = "Ocupada";
+
+        given(camillaService.edit(any(camilla.getClass()))).willReturn(camilla);
+
+        camilla.setEstado(newEstado);
+
+        MockHttpServletResponse response = mockMvc.perform(post("/camillas/editCamilla")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonCamilla.write(camilla).getJson())).andReturn()
+                .getResponse();
+
+        assertThat(response.getContentAsString().equals(jsonCamilla.write(camilla).getJson()));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    void siSeInvocaEditHistorialYEsteNoExisteDebeRetornarNotFound() throws Exception {
+        // Given
+        Camilla camilla = new Camilla(1, "Camilla Plegable", "Libre", 2020);
+        String newEstado = "Ocupada";
+
+        given(camillaService.edit(any(camilla.getClass()))).willReturn(null);
+
+        camilla.setEstado(newEstado);
+
+        MockHttpServletResponse response = mockMvc.perform(post("/camillas/editCamilla")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonCamilla.write(camilla).getJson())).andReturn()
+                .getResponse();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 }
