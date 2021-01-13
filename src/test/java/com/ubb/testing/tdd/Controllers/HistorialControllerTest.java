@@ -26,10 +26,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -51,7 +53,6 @@ public class HistorialControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(historialController).build();
     }
 
-
     @Test
     void siSeInvocaFindByIdYExisteCamillaDebeRetornarCamillaEncontrada() throws Exception {
         // Given
@@ -63,8 +64,8 @@ public class HistorialControllerTest {
         given(historialService.findById(1)).willReturn(historialToFind);
 
         // When
-        MockHttpServletResponse response = mockMvc.perform(get("/historial/findById/1").accept(MediaType.APPLICATION_JSON))
-                .andReturn().getResponse();
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/historial/findById/1").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
@@ -77,8 +78,8 @@ public class HistorialControllerTest {
         given(historialService.findById(1)).willThrow(new HistorialNotFoundException());
 
         // When
-        MockHttpServletResponse response = mockMvc.perform(get("/camillas/findById/1").accept(MediaType.APPLICATION_JSON))
-                .andReturn().getResponse();
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/camillas/findById/1").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
@@ -109,5 +110,48 @@ public class HistorialControllerTest {
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEmpty();
+    }
+
+    @Test
+    void siSeInvocaEditHistorialDebeRetornarLaRespuestaConElObjetoEditado() throws Exception {
+        // Given
+        SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
+        Date fecIngreso = objSDF.parse("20-01-2021");
+        Date fecSalida = objSDF.parse("25-01-2021");
+        Date newFecIngreso = objSDF.parse("22-01-2021");
+
+        Historial historial = new Historial(1, fecIngreso, fecSalida);
+
+        given(historialService.edit(any(historial.getClass()))).willReturn(historial);
+
+        historial.setFechaIngreso(newFecIngreso);
+
+        MockHttpServletResponse response = mockMvc.perform(post("/historial/editHistorial")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonHistorial.write(historial).getJson())).andReturn()
+                .getResponse();
+
+        assertThat(response.getContentAsString().equals(jsonHistorial.write(historial).getJson()));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    void siSeInvocaEditHistorialYEsteNoExisteDebeRetornarNotFound() throws Exception {
+        // Given
+        SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
+        Date fecIngreso = objSDF.parse("20-01-2021");
+        Date fecSalida = objSDF.parse("25-01-2021");
+        Date newFecIngreso = objSDF.parse("22-01-2021");
+
+        Historial historial = new Historial(1, fecIngreso, fecSalida);
+
+        given(historialService.edit(any(historial.getClass()))).willReturn(null);
+
+        historial.setFechaIngreso(newFecIngreso);
+
+        MockHttpServletResponse response = mockMvc.perform(post("/historial/editHistorial")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonHistorial.write(historial).getJson())).andReturn()
+                .getResponse();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 }

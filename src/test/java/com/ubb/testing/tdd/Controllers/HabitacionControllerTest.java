@@ -167,4 +167,25 @@ public class HabitacionControllerTest {
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		assertThat(response.getContentAsString()).isEmpty();
 	}
+
+	@Test
+	void siSeInvocaEditHabitacionYNoExisteDebeRetornarNotFound() throws Exception {
+		// given
+
+		Habitacion habitacion = new Habitacion(3, "UCI", "Disponible", 6);
+		String nuevaEspecialidad = "Cardiologia";
+		int nuevoNumeroCamas = 20;
+
+		habitacion.setEspecialidad(nuevaEspecialidad);
+		habitacion.setNroCamasMax(nuevoNumeroCamas);
+
+		given(habitacionService.edit(any(habitacion.getClass()))).willReturn(null);
+
+		MockHttpServletResponse response = mockMvc.perform(post("/habitaciones/editHabitacion")
+				.contentType(MediaType.APPLICATION_JSON).content(jsonHabitacion.write(habitacion).getJson())).andReturn()
+				.getResponse();
+
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+	}
+
 }

@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,13 +29,28 @@ public class HistorialController {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
+
     @GetMapping("/deleteById/{id}")
-    public ResponseEntity<Void> deletePiso(@PathVariable Integer id){
+    public ResponseEntity<Void> deletePiso(@PathVariable Integer id) {
         try {
             historialService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
-        }catch (HistorialNotFoundException e){
+        } catch (HistorialNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping("/editHistorial")
+    public ResponseEntity<Historial> editHabitacion(@RequestBody Historial historial) throws Exception {
+
+        if (historial != null) {
+            Historial aux = historialService.edit(historial);
+            if (aux != null) {
+                return new ResponseEntity<>(aux, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        }
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 }

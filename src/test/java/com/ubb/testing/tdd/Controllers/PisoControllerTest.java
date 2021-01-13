@@ -196,4 +196,25 @@ public class PisoControllerTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEmpty();
     }
+
+    @Test
+    void siSeInvocaEditPisoYEsteNoExisteDebeRetornarNotFound() throws Exception {
+        // given
+
+        Piso piso = new Piso(1, "Piso 1", "Habilitado", 25);
+        String nuevoNombre = "Primer Piso";
+        String nuevoEstado = "Deshabilitado";
+        int nuevoNumeroDeHabitaciones = 20;
+        piso.setNombre(nuevoNombre);
+        piso.setEstado(nuevoEstado);
+        piso.setNroHabitaciones(nuevoNumeroDeHabitaciones);
+
+        given(pisoService.edit(any(piso.getClass()))).willReturn(null);
+
+        MockHttpServletResponse response = mockMvc.perform(
+                post("/pisos/editPiso").contentType(MediaType.APPLICATION_JSON).content(jsonPiso.write(piso).getJson()))
+                .andReturn().getResponse();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
 }
