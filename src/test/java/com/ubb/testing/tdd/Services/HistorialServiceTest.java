@@ -32,7 +32,7 @@ public class HistorialServiceTest {
     public int ID_HISTORIAL_BUSCAR = 1;
 
     @Test
-    public void siSeInvocaFindByIdYExisteHistorialDebeRetornarLaCamillaEncontrada() throws HistorialNotFoundException, ParseException {
+    public void siSeInvocaFindByIdYExisteHistorialDebeRetornarHistorialEncontrado() throws HistorialNotFoundException, ParseException {
         //Arrange
         SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
         Date fecIngreso = objSDF.parse("20-01-2021");
@@ -51,7 +51,7 @@ public class HistorialServiceTest {
     }
 
     @Test
-    public void siSeInvocaFindByIdYNoExisteHistorialDebeLanzarCamillaNotFoundException() {
+    public void siSeInvocaFindByIdYNoExisteHistorialDebeLanzarHistorialNotFoundException() {
         // Arrange + Act
         when(historialRepository.findById(ID_HISTORIAL_BUSCAR)).thenReturn(Optional.empty());
 

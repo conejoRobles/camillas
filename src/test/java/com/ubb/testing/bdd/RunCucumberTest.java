@@ -1,4 +1,4 @@
-package com.ubb.testing.bdd.integrationTests;
+package com.ubb.testing.bdd;
 
 import org.junit.runner.RunWith;
 
