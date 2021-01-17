@@ -1,4 +1,4 @@
-package com.ubb.testing.bdd.integrationTests;
+package com.ubb.testing.bdd;
 
 import com.ubb.testing.tdd.CamillasApplication;
 import io.cucumber.spring.CucumberContextConfiguration;

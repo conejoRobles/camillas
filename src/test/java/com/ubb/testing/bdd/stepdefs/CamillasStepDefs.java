@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.ubb.testing.bdd.integrationTests.CucumberSpringContextConfiguration;
+import com.ubb.testing.bdd.CucumberSpringContextConfiguration;
 import com.ubb.testing.tdd.Entities.Camilla;
 import com.ubb.testing.tdd.Repository.CamillaRepository;
 import com.ubb.testing.tdd.Services.CamillaService;
