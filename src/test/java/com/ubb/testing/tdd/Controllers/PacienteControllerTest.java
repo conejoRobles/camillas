@@ -2,11 +2,13 @@ package com.ubb.testing.tdd.Controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ubb.testing.tdd.Entities.Paciente;
+import com.ubb.testing.tdd.Exceptions.PacienteAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.PacienteNotFoundException;
 import com.ubb.testing.tdd.Services.PacienteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,7 +22,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
+import java.io.IOException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,5 +79,32 @@ public class PacienteControllerTest {
         // Then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
         assertThat(response.getContentAsString()).isEmpty();
+    }
+    
+    @Test
+    void siSeInvocaCreatePacienteDebeRetornarLaRespuestaConElObjetoCreado() throws IOException, Exception{
+    	
+    	  Paciente pacienteCreate = new Paciente(2, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
+    	  
+    	  
+          MockHttpServletResponse response = mockMvc.perform(post("/paciente/paciente").contentType(MediaType.APPLICATION_JSON)
+                  .content(jsonPaciente.write(pacienteCreate).getJson())).andReturn().getResponse();
+          assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+          assertThat(response.equals(pacienteCreate));
+    }
+    
+    @Test
+    void siSeInvocaCreatePacienteYElPacienteYaExisteDebeRetornarNotFound() throws Exception{
+    	
+    	 Paciente pacienteCreate = new Paciente(2, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
+   	  
+         doThrow(new PacienteAlreadyExistsException()).when(pacienteService).save(ArgumentMatchers.any(Paciente.class));
+
+    	 
+         MockHttpServletResponse response = mockMvc.perform(post("/api/paciente").contentType(MediaType.APPLICATION_JSON)
+                 .content(jsonPaciente.write(pacienteCreate).getJson())).andReturn().getResponse();
+
+         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    	
     }
 }

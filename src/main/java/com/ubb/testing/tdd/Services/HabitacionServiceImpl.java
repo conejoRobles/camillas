@@ -2,9 +2,7 @@ package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Habitacion;
 import com.ubb.testing.tdd.Exceptions.HabitacionAlreadyExistsException;
-import com.ubb.testing.tdd.Entities.Piso;
 import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
-import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Repository.HabitacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

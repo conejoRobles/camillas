@@ -1,7 +1,6 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Camilla;
-import com.ubb.testing.tdd.Entities.Piso;
 import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
 import com.ubb.testing.tdd.Repository.CamillaRepository;
 import org.junit.jupiter.api.Test;

@@ -1,14 +1,14 @@
 package com.ubb.testing.tdd.Controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ubb.testing.tdd.Entities.Camilla;
 import com.ubb.testing.tdd.Entities.Historial;
-import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
+import com.ubb.testing.tdd.Exceptions.HistorialAlreadyExistException;
 import com.ubb.testing.tdd.Exceptions.HistorialNotFoundException;
 import com.ubb.testing.tdd.Services.HistorialService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,12 +21,15 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -80,5 +83,38 @@ public class HistorialControllerTest {
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
         assertThat(response.getContentAsString()).isEmpty();
+    }
+    
+    @Test
+    void siSeInvocaCreateHistorialDebeRetornarLaRespuestaConElObjetoCreado() throws IOException, Exception{
+    	SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
+
+		Date fecIngreso = objSDF.parse("25-01-2021");
+		Date fecSalida = objSDF.parse("02-02-2021");
+
+		Historial historialSave = new Historial(1, fecIngreso, fecSalida);
+    	  
+          MockHttpServletResponse response = mockMvc.perform(post("/historial/historial").contentType(MediaType.APPLICATION_JSON)
+                  .content(jsonHistorial.write(historialSave).getJson())).andReturn().getResponse();
+          assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+          assertThat(response.equals(historialSave));
+    }
+    
+    @Test
+    void siSeInvocaCreatePacienteYElPacienteYaExisteDebeRetornarNotFound() throws Exception{
+    	SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
+
+		Date fecIngreso = objSDF.parse("25-01-2021");
+		Date fecSalida = objSDF.parse("02-02-2021");
+
+		Historial historialSave = new Historial(1, fecIngreso, fecSalida);   	  
+         doThrow(new HistorialAlreadyExistException()).when(historialService).save(ArgumentMatchers.any(Historial.class));
+
+    	 
+         MockHttpServletResponse response = mockMvc.perform(post("/api/historial").contentType(MediaType.APPLICATION_JSON)
+                 .content(jsonHistorial.write(historialSave).getJson())).andReturn().getResponse();
+
+         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    	
     }
 }

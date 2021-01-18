@@ -1,6 +1,7 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Historial;
+import com.ubb.testing.tdd.Exceptions.HistorialAlreadyExistException;
 import com.ubb.testing.tdd.Exceptions.HistorialNotFoundException;
 import com.ubb.testing.tdd.Repository.HistorialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,4 +23,13 @@ public class HistorialServiceImpl implements HistorialService{
         if (historialRepositoryById.isPresent()) return historialRepositoryById.get();
         else throw new HistorialNotFoundException();
     }
+
+	@Override
+	public Historial save(Historial historial) throws HistorialAlreadyExistException, HistorialNotFoundException {
+		if(findById(historial.getId()) == null) {
+			return historialRepository.save(historial);
+		}else {
+			throw new HistorialAlreadyExistException();
+		}
+	}
 }
