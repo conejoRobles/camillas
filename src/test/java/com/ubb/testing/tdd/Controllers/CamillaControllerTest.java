@@ -2,11 +2,15 @@ package com.ubb.testing.tdd.Controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ubb.testing.tdd.Entities.Camilla;
+import com.ubb.testing.tdd.Entities.Habitacion;
+import com.ubb.testing.tdd.Exceptions.CamillaAlreadyExistException;
 import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
+import com.ubb.testing.tdd.Exceptions.HabitacionAlreadyExistsException;
 import com.ubb.testing.tdd.Services.CamillaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,7 +28,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -94,4 +100,28 @@ public class CamillaControllerTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEqualTo(jsonListCamilla.write(camillaList).getJson());
     }
+    
+	@Test
+	void siSeInvocaSaveCamillaDebeRetornarLaCamillaObtenida() throws Exception {
+
+		Camilla camillaCreate = new Camilla(1, "Camilla Plegable XL", "Libre", 2020);
+		MockHttpServletResponse response = mockMvc.perform(post("/camillas/save").contentType(MediaType.APPLICATION_JSON)
+				.content(jsonCamilla.write(camillaCreate).getJson())).andReturn().getResponse();
+
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+		assertThat(response.getContentAsString()).isEqualTo(jsonCamilla.write(camillaCreate).getJson());
+	}
+
+	@Test
+	void siSeInvocaSaveCamillaDebeRetornarStatusOk() throws Exception {
+
+		Camilla camillaCreate = new Camilla(3, "Camilla Plegable M", "En mantencion", 2020);
+
+		doThrow(new CamillaAlreadyExistException()).when(camillaService).save(ArgumentMatchers.any(Camilla.class));
+
+		MockHttpServletResponse response = mockMvc.perform(post("/camillas/save").contentType(MediaType.APPLICATION_JSON)
+				.content(jsonCamilla.write(camillaCreate).getJson())).andReturn().getResponse();
+
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+	}
 }

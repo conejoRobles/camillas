@@ -1,6 +1,7 @@
 package com.ubb.testing.tdd.Controllers;
 
 import com.ubb.testing.tdd.Entities.Camilla;
+import com.ubb.testing.tdd.Exceptions.CamillaAlreadyExistException;
 import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
 import com.ubb.testing.tdd.Services.CamillaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,5 +36,15 @@ public class CamillaController {
     @GetMapping(value = "/findAll")
     public ResponseEntity<List<Camilla>> findAllPisos() {
         return new ResponseEntity<>(camillaService.findAll(), HttpStatus.OK);
+    }
+    
+    @PostMapping("/save")
+    public ResponseEntity<Camilla> saveCamilla(@RequestBody Camilla camilla) throws CamillaNotFoundException {
+    	try {
+    		camillaService.save(camilla);
+    		return new ResponseEntity<>(camilla, HttpStatus.CREATED);
+    	} catch (CamillaAlreadyExistException e) {
+    		return new ResponseEntity<>(HttpStatus.OK);
+    	}
     }
 }

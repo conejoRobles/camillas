@@ -1,6 +1,7 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Camilla;
+import com.ubb.testing.tdd.Exceptions.CamillaAlreadyExistException;
 import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
 import com.ubb.testing.tdd.Repository.CamillaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,14 @@ public class CamillaServiceImpl implements CamillaService {
 
     @Override
     @Transactional
-    public void save(Camilla camilla) {
-        camillaRepository.save(camilla);
+    public Camilla save(Camilla camilla) throws CamillaNotFoundException, CamillaAlreadyExistException{
+    	
+    	if(findById(camilla.getId())==null) {
+    		 return camillaRepository.save(camilla);
+    	}else {
+    		throw new CamillaAlreadyExistException();
+    	}
+      
     }
 
     @Override
