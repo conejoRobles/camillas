@@ -47,10 +47,6 @@ public class HistorialServiceImpl implements HistorialService {
 
 	@Override
 	public Historial save(Historial historial) throws HistorialAlreadyExistException, HistorialNotFoundException {
-		if(findById(historial.getId()) == null) {
-			return historialRepository.save(historial);
-		}else {
-			throw new HistorialAlreadyExistException();
-		}
+        return historialRepository.save(historial);
 	}
 }

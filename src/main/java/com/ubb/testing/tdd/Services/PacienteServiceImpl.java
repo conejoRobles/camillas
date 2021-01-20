@@ -26,10 +26,6 @@ public class PacienteServiceImpl implements PacienteService {
 
 	@Override
 	public Paciente save(Paciente paciente) throws PacienteNotFoundException, PacienteAlreadyExistsException {
-		if(findById(paciente.getId()) == null) {
-			return pacienteRepository.save(paciente);
-		}else {
-			throw new PacienteAlreadyExistsException();
-		}
+        return pacienteRepository.save(paciente);
 	}
 }

@@ -30,13 +30,7 @@ public class CamillaServiceImpl implements CamillaService {
     @Override
     @Transactional
     public Camilla save(Camilla camilla) throws CamillaNotFoundException, CamillaAlreadyExistException{
-    	
-    	if(findById(camilla.getId())==null) {
-    		 return camillaRepository.save(camilla);
-    	}else {
-    		throw new CamillaAlreadyExistException();
-    	}
-      
+        return camillaRepository.save(camilla);
     }
 
     @Override

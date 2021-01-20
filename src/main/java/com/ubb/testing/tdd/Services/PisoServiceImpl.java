@@ -34,14 +34,8 @@ public class PisoServiceImpl implements PisoService {
     }
 
     @Override
-    public Piso save(Piso piso) throws PisoNotFoundException, PisoAlreadyExistsException{
-    	
-    	if(findById(piso.getId()) == null) {
-    		   return pisoRepository.save(piso);
-    	}else {
-    		throw new PisoAlreadyExistsException();
-    	}
-     
+    public Piso save(Piso piso) throws PisoNotFoundException, PisoAlreadyExistsException {
+        return pisoRepository.save(piso);
     }
 
     @Override
