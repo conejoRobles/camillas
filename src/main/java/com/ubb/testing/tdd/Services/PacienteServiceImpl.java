@@ -20,16 +20,28 @@ public class PacienteServiceImpl implements PacienteService {
     @Transactional(readOnly = true)
     public Paciente findById(int id) throws PacienteNotFoundException {
         Optional<Paciente> pacienteOptional = pacienteRepository.findById(id);
-        if (pacienteOptional.isPresent()) return pacienteOptional.get();
-        else throw new PacienteNotFoundException();
+        if (pacienteOptional.isPresent())
+            return pacienteOptional.get();
+        else
+            throw new PacienteNotFoundException();
     }
 
-	@Override
-	public Paciente save(Paciente paciente) throws PacienteNotFoundException, PacienteAlreadyExistsException {
-		if(findById(paciente.getId()) == null) {
-			return pacienteRepository.save(paciente);
-		}else {
-			throw new PacienteAlreadyExistsException();
-		}
-	}
+    @Override
+    public Paciente save(Paciente paciente) throws PacienteNotFoundException, PacienteAlreadyExistsException {
+        if (findById(paciente.getId()) == null) {
+            return pacienteRepository.save(paciente);
+        } else {
+            throw new PacienteAlreadyExistsException();
+        }
+    }
+
+    @Override
+    public Paciente edit(Paciente paciente) {
+        Optional<Paciente> aux = pacienteRepository.findById(paciente.getId());
+        if (aux != null) {
+            return pacienteRepository.save(paciente);
+        }
+        return null;
+
+    }
 }

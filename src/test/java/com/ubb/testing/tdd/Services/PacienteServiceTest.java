@@ -93,4 +93,33 @@ public class PacienteServiceTest {
 
     }
 
+    @Test
+    public void siSeEditaUnPacienteExitosamenteRetornaElPacienteConLosNuevosValores() {
+
+        Paciente paciente = new Paciente(2, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
+        String newApellido = "Lopez";
+
+        when(pacienteRepository.findById(paciente.getId())).thenReturn(Optional.of(paciente));
+        when(pacienteRepository.save(paciente)).thenReturn(paciente);
+
+        paciente.setApellido(newApellido);
+
+        assertEquals(newApellido, pacienteService.edit(paciente).getApellido());
+
+    }
+
+    @Test
+    public void siSeEditaUnPacienteYNoExisteRetornaNull() {
+
+        Paciente paciente = new Paciente(2, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
+        String newApellido = "Lopez";
+
+        when(pacienteRepository.findById(paciente.getId())).thenReturn(null);
+
+        paciente.setApellido(newApellido);
+
+        assertNull(pacienteService.edit(paciente));
+
+    }
+
 }

@@ -37,12 +37,26 @@ public class PacienteController {
 			throws PacienteNotFoundException, PacienteAlreadyExistsException {
 
 		try {
-			
+
 			pacienteService.save(paciente);
 			return paciente;
 		} catch (PacienteAlreadyExistsException e) {
 			return null;
 		}
 
+	}
+
+	@PostMapping("/editPaciente")
+	public ResponseEntity<Paciente> editHabitacion(@RequestBody Paciente paciente) throws Exception {
+
+		if (paciente != null) {
+			Paciente aux = pacienteService.edit(paciente);
+			if (aux != null) {
+				return new ResponseEntity<>(aux, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+			}
+		}
+		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 	}
 }

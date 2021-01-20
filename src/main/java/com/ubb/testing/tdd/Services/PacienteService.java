@@ -7,6 +7,8 @@ import com.ubb.testing.tdd.Exceptions.PacienteNotFoundException;
 public interface PacienteService {
 
     Paciente findById(int id) throws PacienteNotFoundException;
-    
+
     Paciente save(Paciente paciente) throws PacienteNotFoundException, PacienteAlreadyExistsException;
+
+    Paciente edit(Paciente paciente);
 }

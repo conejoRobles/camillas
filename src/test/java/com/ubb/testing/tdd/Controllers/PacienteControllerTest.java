@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -54,57 +55,90 @@ public class PacienteControllerTest {
 
     @Test
     void siSeInvocaPacienteFindByIdYExisteElPacienteDebeRetonarElPacienteEncontrado() throws Exception {
-        //Given
+        // Given
         Paciente pacienteSearch = new Paciente(1, "19.321.344-3", "Pedro", "Herrera", "Habilitado");
         given(pacienteService.findById(ID_PACIENTE_FIND)).willReturn(pacienteSearch);
 
-        //When
-        MockHttpServletResponse response = mockMvc.perform(get("/paciente/findById/1").accept(MediaType.APPLICATION_JSON))
-                .andReturn().getResponse();
+        // When
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/paciente/findById/1").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
-        //Then
+        // Then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEqualTo(jsonPaciente.write(pacienteSearch).getJson());
     }
 
     @Test
     void siSeInvocaPacienteFindByIdYNoExisteDebeRetonarStatusNotFound() throws Exception {
-        //Given
+        // Given
         given(pacienteService.findById(ID_PACIENTE_FIND)).willThrow(new PacienteNotFoundException());
 
         // When
-        MockHttpServletResponse response = mockMvc.perform(get("/paciente/findById/1").accept(MediaType.APPLICATION_JSON))
-                .andReturn().getResponse();
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/paciente/findById/1").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         // Then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
         assertThat(response.getContentAsString()).isEmpty();
     }
-    
+
     @Test
-    void siSeInvocaCreatePacienteDebeRetornarLaRespuestaConElObjetoCreado() throws IOException, Exception{
-    	
-    	  Paciente pacienteCreate = new Paciente(2, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
-    	  
-    	  
-          MockHttpServletResponse response = mockMvc.perform(post("/paciente/paciente").contentType(MediaType.APPLICATION_JSON)
-                  .content(jsonPaciente.write(pacienteCreate).getJson())).andReturn().getResponse();
-          assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
-          assertThat(response.equals(pacienteCreate));
+    void siSeInvocaCreatePacienteDebeRetornarLaRespuestaConElObjetoCreado() throws IOException, Exception {
+
+        Paciente pacienteCreate = new Paciente(2, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
+
+        MockHttpServletResponse response = mockMvc.perform(post("/paciente/paciente")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonPaciente.write(pacienteCreate).getJson()))
+                .andReturn().getResponse();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
+        assertThat(response.equals(pacienteCreate));
     }
-    
+
     @Test
-    void siSeInvocaCreatePacienteYElPacienteYaExisteDebeRetornarNotFound() throws Exception{
-    	
-    	 Paciente pacienteCreate = new Paciente(2, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
-   	  
-         doThrow(new PacienteAlreadyExistsException()).when(pacienteService).save(ArgumentMatchers.any(Paciente.class));
+    void siSeInvocaCreatePacienteYElPacienteYaExisteDebeRetornarNotFound() throws Exception {
 
-    	 
-         MockHttpServletResponse response = mockMvc.perform(post("/api/paciente").contentType(MediaType.APPLICATION_JSON)
-                 .content(jsonPaciente.write(pacienteCreate).getJson())).andReturn().getResponse();
+        Paciente pacienteCreate = new Paciente(2, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
 
-         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
-    	
+        doThrow(new PacienteAlreadyExistsException()).when(pacienteService).save(ArgumentMatchers.any(Paciente.class));
+
+        MockHttpServletResponse response = mockMvc.perform(post("/api/paciente").contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPaciente.write(pacienteCreate).getJson())).andReturn().getResponse();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+
+    }
+
+    @Test
+    void siSeInvocaEditPacienteDebeRetornarLaRespuestaConElObjetoEditado() throws Exception {
+
+        Paciente paciente = new Paciente(1, "19.321.344-3", "Pedro", "Herrera", "Habilitado");
+        String newApellido = "Lopez";
+
+        given(pacienteService.edit(any(paciente.getClass()))).willReturn(paciente);
+
+        paciente.setApellido(newApellido);
+
+        MockHttpServletResponse response = mockMvc.perform(post("/paciente/editPaciente")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonPaciente.write(paciente).getJson())).andReturn()
+                .getResponse();
+
+        assertThat(response.getContentAsString().equals(jsonPaciente.write(paciente).getJson()));
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    void siSeInvocaEditPacienteYEsteNoExisteDebeRetornarNotFound() throws Exception {
+        Paciente paciente = new Paciente(1, "19.321.344-3", "Pedro", "Herrera", "Habilitado");
+        String newApellido = "Lopez";
+
+        given(pacienteService.edit(any(paciente.getClass()))).willReturn(null);
+
+        paciente.setApellido(newApellido);
+
+        MockHttpServletResponse response = mockMvc.perform(post("/paciente/editPaciente")
+                .contentType(MediaType.APPLICATION_JSON).content(jsonPaciente.write(paciente).getJson())).andReturn()
+                .getResponse();
+
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 }
