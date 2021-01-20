@@ -131,7 +131,7 @@ public class CamillaControllerTest {
     }
 
     @Test
-    void siSeInvocaEditHistorialDebeRetornarLaRespuestaConElObjetoEditado() throws Exception {
+    void siSeInvocaEditCamillaDebeRetornarLaRespuestaConElObjetoEditado() throws Exception {
         // Given
         Camilla camilla = new Camilla(1, "Camilla Plegable", "Libre", 2020);
         String newEstado = "Ocupada";
@@ -149,7 +149,7 @@ public class CamillaControllerTest {
     }
 
     @Test
-    void siSeInvocaEditHistorialYEsteNoExisteDebeRetornarNotFound() throws Exception {
+    void siSeInvocaEditCamillaYEsteNoExisteDebeRetornarNotFound() throws Exception {
         // Given
         Camilla camilla = new Camilla(1, "Camilla Plegable", "Libre", 2020);
         String newEstado = "Ocupada";

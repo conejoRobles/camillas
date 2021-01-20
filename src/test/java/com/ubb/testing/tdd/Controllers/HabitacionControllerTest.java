@@ -135,7 +135,7 @@ public class HabitacionControllerTest {
 	}
 
 	@Test
-	void siSeInvocadeletePisoYNoExisteElPisoDebeLanzarStatusNotFound() throws Exception {
+	void siSeInvocadeleteHabitacionYNoExisteElPisoDebeLanzarStatusNotFound() throws Exception {
 		// Given
 		long id = 2;
 		doThrow(new HabitacionNotFoundException()).when(habitacionService).deleteById(id);
@@ -149,7 +149,7 @@ public class HabitacionControllerTest {
 	}
 
 	@Test
-	void siSeInvocaDeletePisoYExisteDebePoderEliminarlo() throws Exception {
+	void siSeInvocaDeleteHabitacionYExisteDebePoderEliminarlo() throws Exception {
 		// Given
 		long id = 2;
 		doNothing().when(habitacionService).deleteById(id);

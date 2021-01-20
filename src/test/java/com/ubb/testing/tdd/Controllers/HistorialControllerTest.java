@@ -89,7 +89,7 @@ public class HistorialControllerTest {
     }
 
     @Test
-    void siSeInvocadeleteCamillaYNoExisteLaCamillaDebeLanzarStatusNotFound() throws Exception {
+    void siSeInvocadeleteHistorialYNoExisteLaCamillaDebeLanzarStatusNotFound() throws Exception {
         // Given
         doThrow(new HistorialNotFoundException()).when(historialService).deleteById(2);
         // When
@@ -102,7 +102,7 @@ public class HistorialControllerTest {
     }
 
     @Test
-    void siSeInvocaDeleteCamillaYExisteDebePoderEliminarlo() throws Exception {
+    void siSeInvocaDeleteHistorialYExisteDebePoderEliminarlo() throws Exception {
         // Given
         doNothing().when(historialService).deleteById(2);
         // When
@@ -174,7 +174,7 @@ public class HistorialControllerTest {
     }
 
     @Test
-    void siSeInvocaCreatePacienteYElPacienteYaExisteDebeRetornarNotFound() throws Exception {
+    void siSeInvocaCreateHistorialYElHistorialYaExisteDebeRetornarNotFound() throws Exception {
         SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
 
         Date fecIngreso = objSDF.parse("25-01-2021");

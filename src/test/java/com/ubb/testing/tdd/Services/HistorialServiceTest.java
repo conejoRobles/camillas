@@ -102,7 +102,7 @@ public class HistorialServiceTest {
     }
 
     @Test
-    public void siSeEditaUnaHabitacionYNoExisteRetornaNull() throws ParseException {
+    public void siSeEditaUnaHistorialYNoExisteRetornaNull() throws ParseException {
 
         SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
         Date fecIngreso = objSDF.parse("20-01-2021");

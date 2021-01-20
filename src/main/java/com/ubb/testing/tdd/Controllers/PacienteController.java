@@ -62,7 +62,7 @@ public class PacienteController {
 	}
 
 	@GetMapping("/deleteById/{id}")
-	public ResponseEntity<Void> deletePiso(@PathVariable Integer id){
+	public ResponseEntity<Void> deletePaciente(@PathVariable Integer id){
 		try {
 			pacienteService.deleteById(id);
 			return new ResponseEntity<>(HttpStatus.OK);
