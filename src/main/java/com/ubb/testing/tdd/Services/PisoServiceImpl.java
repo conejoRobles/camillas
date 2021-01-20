@@ -35,6 +35,9 @@ public class PisoServiceImpl implements PisoService {
 
     @Override
     public Piso save(Piso piso) throws PisoNotFoundException, PisoAlreadyExistsException {
+        System.out.println("guardo");
+        System.out.println(piso.getNombre());
+        System.out.println(piso.getId());
         return pisoRepository.save(piso);
     }
 

@@ -17,7 +17,7 @@ CREATE TABLE Habitacion (
                          nro_camas_max INTEGER
 );
 
-CREATE TABLE Hisotrial (
+CREATE TABLE Historial (
                          id         		INTEGER IDENTITY PRIMARY KEY,
                          fecha_ingreso	 		DATE,
                          fecha_salida			DATE,

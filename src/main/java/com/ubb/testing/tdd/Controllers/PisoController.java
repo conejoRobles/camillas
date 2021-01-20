@@ -31,6 +31,7 @@ public class PisoController {
 
     @GetMapping(value = "/findById/{id}")
     public ResponseEntity<Piso> findById(@PathVariable Integer id) {
+        System.out.println("id:"+id);
         try {
             return new ResponseEntity<>(pisoService.findById(id), HttpStatus.OK);
         } catch (PisoNotFoundException e) {
@@ -38,7 +39,7 @@ public class PisoController {
         }
     }
 
-    @PostMapping("/piso")
+    @PostMapping("/save")
     @ResponseStatus(HttpStatus.CREATED)
     public Piso createPiso(@RequestBody Piso piso) throws PisoAlreadyExistsException, PisoNotFoundException {
 
@@ -70,10 +71,12 @@ public class PisoController {
 
     @GetMapping("/deleteById/{id}")
     public ResponseEntity<Void> deletePiso(@PathVariable Integer id){
+        System.out.println("delete:"+id);
         try {
             pisoService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (PisoNotFoundException e){
+            System.out.println("entre aqui");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

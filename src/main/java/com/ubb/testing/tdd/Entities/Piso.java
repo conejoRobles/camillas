@@ -25,6 +25,12 @@ public class Piso {
         this.nroHabitaciones = nroHabitaciones;
     }
 
+    public Piso(String nombre, String estado, Integer nroHabitaciones) {
+        this.nombre = nombre;
+        this.estado = estado;
+        this.nroHabitaciones = nroHabitaciones;
+    }
+
     public Integer getId() {
         return id;
     }
