@@ -54,7 +54,7 @@ public class HistorialControllerTest {
     }
 
     @Test
-    void siSeInvocaFindByIdYExisteCamillaDebeRetornarCamillaEncontrada() throws Exception {
+    void siSeInvocaFindByIdYExisteHistorialDebeRetornarHistorialEncontrado() throws Exception {
         // Given
         SimpleDateFormat objSDF = new SimpleDateFormat("dd-mm-yyyy");
         Date fecIngreso = objSDF.parse("20-01-2021");
@@ -73,7 +73,7 @@ public class HistorialControllerTest {
     }
 
     @Test
-    void siSeInvocaFindByIdYNoExisteCamillaDebeRetonarStatusNotFound() throws Exception {
+    void siSeInvocaFindByIdYNoExisteHistorialDebeRetonarStatusNotFound() throws Exception {
         // Given
         given(historialService.findById(1)).willThrow(new HistorialNotFoundException());
 
