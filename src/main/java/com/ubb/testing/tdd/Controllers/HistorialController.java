@@ -34,7 +34,7 @@ public class HistorialController {
     }
 
     @GetMapping("/deleteById/{id}")
-    public ResponseEntity<Void> deletePiso(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteHistorial(@PathVariable Integer id) {
         try {
             historialService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);

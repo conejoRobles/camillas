@@ -42,12 +42,7 @@ public class HabitacionServiceImpl implements HabitacionService {
 
     @Override
     public Habitacion save(Habitacion habitacion) throws HabitacionAlreadyExistsException {
-        if (habitacionRepository.findById(habitacion.getId()) == null) {
-            return habitacionRepository.save(habitacion);
-        } else {
-            throw new HabitacionAlreadyExistsException();
-        }
-
+        return habitacionRepository.save(habitacion);
     }
 
     public void deleteById(Long id) throws HabitacionNotFoundException {
