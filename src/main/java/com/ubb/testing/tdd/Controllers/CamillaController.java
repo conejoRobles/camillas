@@ -1,6 +1,7 @@
 package com.ubb.testing.tdd.Controllers;
 
 import com.ubb.testing.tdd.Entities.Camilla;
+import com.ubb.testing.tdd.Exceptions.CamillaAlreadyExistException;
 import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
 import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Services.CamillaService;
@@ -59,5 +60,15 @@ public class CamillaController {
             }
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<Camilla> saveCamilla(@RequestBody Camilla camilla) throws CamillaNotFoundException {
+        try {
+            camillaService.save(camilla);
+            return new ResponseEntity<>(camilla, HttpStatus.CREATED);
+        } catch (CamillaAlreadyExistException e) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
     }
 }

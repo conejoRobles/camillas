@@ -1,6 +1,7 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Paciente;
+import com.ubb.testing.tdd.Exceptions.PacienteAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.PacienteNotFoundException;
 import com.ubb.testing.tdd.Repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,4 +23,13 @@ public class PacienteServiceImpl implements PacienteService {
         if (pacienteOptional.isPresent()) return pacienteOptional.get();
         else throw new PacienteNotFoundException();
     }
+
+	@Override
+	public Paciente save(Paciente paciente) throws PacienteNotFoundException, PacienteAlreadyExistsException {
+		if(findById(paciente.getId()) == null) {
+			return pacienteRepository.save(paciente);
+		}else {
+			throw new PacienteAlreadyExistsException();
+		}
+	}
 }

@@ -1,6 +1,7 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Historial;
+import com.ubb.testing.tdd.Exceptions.HistorialAlreadyExistException;
 import com.ubb.testing.tdd.Exceptions.HistorialNotFoundException;
 
 public interface HistorialService {
@@ -9,4 +10,6 @@ public interface HistorialService {
     void deleteById(int id) throws HistorialNotFoundException;
 
     Historial edit(Historial historial);
+
+    Historial save(Historial historial) throws HistorialAlreadyExistException, HistorialNotFoundException;
 }

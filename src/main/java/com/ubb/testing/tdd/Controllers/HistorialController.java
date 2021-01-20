@@ -1,8 +1,10 @@
 package com.ubb.testing.tdd.Controllers;
 
 import com.ubb.testing.tdd.Entities.Historial;
+import com.ubb.testing.tdd.Exceptions.HistorialAlreadyExistException;
 import com.ubb.testing.tdd.Exceptions.HistorialNotFoundException;
 import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
+
 import com.ubb.testing.tdd.Services.HistorialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -52,5 +55,20 @@ public class HistorialController {
             }
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/historial")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Historial createHistorial(@RequestBody Historial historial)
+            throws HistorialNotFoundException, HistorialAlreadyExistException {
+
+        try {
+
+            historialService.save(historial);
+            return historial;
+        } catch (HistorialAlreadyExistException e) {
+            return null;
+        }
+
     }
 }

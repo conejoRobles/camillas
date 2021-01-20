@@ -7,6 +7,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.ubb.testing.bdd.CucumberSpringContextConfiguration;
 import com.ubb.testing.tdd.Entities.Camilla;
+import com.ubb.testing.tdd.Exceptions.CamillaAlreadyExistException;
 import com.ubb.testing.tdd.Exceptions.CamillaNotFoundException;
 import com.ubb.testing.tdd.Repository.CamillaRepository;
 import com.ubb.testing.tdd.Services.CamillaService;
@@ -32,6 +33,7 @@ public class CamillasStepDefs extends CucumberSpringContextConfiguration {
 
     private ResponseEntity<List<Camilla>> responseCamillas;
     private ResponseEntity<Camilla> responseCamilla;
+
     private String createURLWithPort(String uri) {
         return "http://localhost:" + port + uri;
     }
@@ -51,7 +53,8 @@ public class CamillasStepDefs extends CucumberSpringContextConfiguration {
     }
 
     @Given("existe una camilla; tipo {string}, estado {string}, year {int}")
-    public void existe_una_camilla_tipo_estado_year(String tipo, String estado, Integer year) {
+    public void existe_una_camilla_tipo_estado_year(String tipo, String estado, Integer year)
+            throws CamillaNotFoundException, CamillaAlreadyExistException {
         camilla = new Camilla(tipo, estado, year);
         camillaService.save(camilla);
     }
@@ -136,8 +139,8 @@ public class CamillasStepDefs extends CucumberSpringContextConfiguration {
         HttpEntity<Camilla> entity = new HttpEntity<>(camilla, httpHeaders);
 
         testRestTemplate = new TestRestTemplate();
-        responseCamilla = testRestTemplate.exchange(createURLWithPort("/camillas/editCamilla"),
-                HttpMethod.POST, entity, Camilla.class);
+        responseCamilla = testRestTemplate.exchange(createURLWithPort("/camillas/editCamilla"), HttpMethod.POST, entity,
+                Camilla.class);
     }
 
     @Then("obtengo el estado Ok y la camilla con estado {string}")
@@ -147,6 +150,5 @@ public class CamillasStepDefs extends CucumberSpringContextConfiguration {
         assertEquals(HttpStatus.OK, responseCamilla.getStatusCode());
         assertEquals(newEstado, camilla.getEstado());
     }
-
 
 }

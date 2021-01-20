@@ -124,4 +124,32 @@ public class CamillaServiceTest {
 
     }
 
+    @Test
+    public void siSeinvocaSaveYNoExisteLaCamillaSeAgrega() {
+
+        List<Camilla> camillas = new ArrayList<Camilla>();
+
+        Camilla camilla1 = new Camilla(1, "Camilla Plegable XL", "Libre", 2020);
+        Camilla camilla2 = new Camilla(2, "Camilla Plegable L", "Ocupada", 2018);
+        Camilla camilla3 = new Camilla(3, "Camilla Plegable M", "En mantencion", 2020);
+
+        camillas.add(camilla1);
+        camillas.add(camilla2);
+
+        when(camillaRepository.findAll()).thenReturn(camillas);
+
+        camillaRepository.save(camilla3);
+
+        verify(camillaRepository, times(1)).save(camilla3);
+    }
+
+    @Test
+    public void siSeInvocaSaveYAgregoUnaCamillaDebeRetornarUnaCamillaErroneo() {
+        Camilla camilla1 = new Camilla(1, "Camilla Plegable XL", "Libre", 2020);
+        Camilla camilla2 = new Camilla(2, "Camilla Plegable L", "Ocupada", 2018);
+
+        when(camillaRepository.save(camilla1)).thenReturn(camilla2);
+
+        assertNotEquals(camilla1, camillaRepository.save(camilla1));
+    }
 }

@@ -37,7 +37,6 @@ public class PisoServiceImpl implements PisoService {
     public Piso save(Piso piso) throws PisoNotFoundException, PisoAlreadyExistsException{
     	
     	if(findById(piso.getId()) == null) {
-    		System.out.println("te encontré");
     		   return pisoRepository.save(piso);
     	}else {
     		throw new PisoAlreadyExistsException();

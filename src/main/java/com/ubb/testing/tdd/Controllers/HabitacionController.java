@@ -3,7 +3,6 @@ package com.ubb.testing.tdd.Controllers;
 import com.ubb.testing.tdd.Entities.Habitacion;
 import com.ubb.testing.tdd.Exceptions.HabitacionAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.HabitacionNotFoundException;
-import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Services.HabitacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
