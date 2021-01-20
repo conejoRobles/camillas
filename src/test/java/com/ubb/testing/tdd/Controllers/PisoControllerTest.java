@@ -119,7 +119,7 @@ public class PisoControllerTest {
         // given
 
         Piso pisoCreate = new Piso(1, "Piso 1", "Habilitado", 25);
-        MockHttpServletResponse response = mockMvc.perform(post("/pisos/piso").contentType(MediaType.APPLICATION_JSON)
+        MockHttpServletResponse response = mockMvc.perform(post("/pisos/save").contentType(MediaType.APPLICATION_JSON)
                 .content(jsonPiso.write(pisoCreate).getJson())).andReturn().getResponse();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
         assertThat(response.equals(pisoCreate));
