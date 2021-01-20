@@ -104,6 +104,12 @@ public class CamillasStepDefs extends CucumberSpringContextConfiguration {
         assertEquals(nrCamillas, camillas.size());
     }
 
+    @Given("existe una camilla; id {int}, tipo {string}, estado {string}, year {int}")
+    public void existe_una_camilla_id_tipo_estado_year(Integer id, String tipo, String estado, Integer year) throws CamillaNotFoundException, CamillaAlreadyExistException {
+        camilla = new Camilla(id,tipo, estado, year);
+        camillaService.save(camilla);
+    }
+
     @When("elimino una camilla que posee el id {int}")
     public void elimino_una_camilla_que_posee_el_id(Integer idCamilla) {
         HttpHeaders httpHeaders = new HttpHeaders();
