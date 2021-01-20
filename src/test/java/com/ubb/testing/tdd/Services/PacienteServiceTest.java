@@ -37,16 +37,16 @@ public class PacienteServiceTest {
 
     @Test
     public void siSeInvocaFindByIdYExistePacienteDebeRetornarPacienteEncontrado() throws PacienteNotFoundException {
-        //Arrange
+        // Arrange
         Paciente pacienteSearch = new Paciente(1, "19.321.344-3", "Pedro", "Herrera", "Habilitado");
         Paciente pacienteFromService;
 
         when(pacienteRepository.findById(ID_PACIENTE_FIND)).thenReturn(Optional.of(pacienteSearch));
 
-        //Act
+        // Act
         pacienteFromService = pacienteService.findById(ID_PACIENTE_FIND);
 
-        //Assert
+        // Assert
         assertNotNull(pacienteFromService);
         assertEquals(pacienteSearch, pacienteFromService);
     }
@@ -56,40 +56,41 @@ public class PacienteServiceTest {
         // Arrange + act
         when(pacienteRepository.findById(ID_PACIENTE_FIND)).thenReturn(Optional.empty());
 
-        //Assert
+        // Assert
         assertThrows(PacienteNotFoundException.class, () -> pacienteService.findById(ID_PACIENTE_FIND));
 
     }
-    
+
     @Test
-    public void siSeInvocaSavePacienteYAgregoUnPisoDebeRetornarElPisoAgregado() throws PacienteAlreadyExistsException, PacienteNotFoundException {
-    	
-    	List<Paciente> pacientes = new ArrayList<Paciente>();
-    	
-    	Paciente paciente1 = new Paciente(2, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
-    	Paciente paciente2 = new Paciente(3, "11.111.111-1", "Camilo", "Martinez", "Habilitado");
-    	
-    	pacientes.add(paciente1);
-    	pacientes.add(paciente2);
-    	
-    	when(pacienteRepository.findAll()).thenReturn(pacientes);
-    	
-    	pacienteRepository.save(paciente2);
-    	
-    	verify(pacienteRepository, times(1)).save(paciente2);
-    	
+    public void siSeInvocaSavePacienteYAgregoUnPisoDebeRetornarElPisoAgregado()
+            throws PacienteAlreadyExistsException, PacienteNotFoundException {
+
+        List<Paciente> pacientes = new ArrayList<Paciente>();
+
+        Paciente paciente1 = new Paciente(2, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
+        Paciente paciente2 = new Paciente(3, "11.111.111-1", "Camilo", "Martinez", "Habilitado");
+
+        pacientes.add(paciente1);
+        pacientes.add(paciente2);
+
+        when(pacienteRepository.findAll()).thenReturn(pacientes);
+
+        pacienteRepository.save(paciente2);
+
+        verify(pacienteRepository, times(1)).save(paciente2);
+
     }
-    
+
     @Test
-    public void siSeInvocaSavePacienteYAgregoUnPacienteDebeRetornarUnPacienteErroneo() throws PacienteAlreadyExistsException, PacienteNotFoundException{
-    	Paciente paciente1 = new Paciente(2, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
-    	Paciente paciente2 = new Paciente(3, "11.111.111-1", "Camilo", "Martinez", "Habilitado");
-    	
-    	when(pacienteRepository.save(paciente2)).thenReturn(paciente2);
-    	
-    	assertNotEquals(paciente1, pacienteRepository.save(paciente2));
-    	
-    	
+    public void siSeInvocaSavePacienteYAgregoUnPacienteDebeRetornarUnPacienteErroneo()
+            throws PacienteAlreadyExistsException, PacienteNotFoundException {
+        Paciente paciente1 = new Paciente(2, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
+        Paciente paciente2 = new Paciente(3, "11.111.111-1", "Camilo", "Martinez", "Habilitado");
+
+        when(pacienteRepository.save(paciente2)).thenReturn(paciente2);
+
+        assertNotEquals(paciente1, pacienteRepository.save(paciente2));
+
     }
 
 }
