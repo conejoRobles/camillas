@@ -22,3 +22,8 @@ Feature: Servicios asociados a una camilla
     When edito la camilla que posee el id 1, cambiando el estado a "Ocupada"
     Then obtengo el estado Ok y la camilla con estado "Ocupada"
 
+  Scenario: Agregar una nueva camilla al hospital
+    Given se tiene una nueva camilla; tipo "Plegable XL", estado "Libre", year 2021
+    When solicito se agregue una camilla a al hospital
+    Then obtengo el estado "Created" y el libro agregado tiene como tipo "Plegable XL" y year 2021
+

@@ -157,4 +157,33 @@ public class CamillasStepDefs extends CucumberSpringContextConfiguration {
         assertEquals(newEstado, camilla.getEstado());
     }
 
+    @Given("se tiene una nueva camilla; tipo {string}, estado {string}, year {int}")
+    public void se_tiene_una_nueva_camilla_tipo_estado_year(String tipo, String estado, Integer year) throws CamillaNotFoundException, CamillaAlreadyExistException {
+        camilla = new Camilla(tipo, estado, year);
+        camillaService.save(camilla);
+    }
+
+    @When("solicito se agregue una camilla a al hospital")
+    public void solicito_se_agregue_una_camilla_a_al_hospital() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
+        HttpEntity<Camilla> entity = new HttpEntity<>(camilla,httpHeaders);
+
+        testRestTemplate = new TestRestTemplate();
+        responseCamilla = testRestTemplate
+                .exchange(createURLWithPort("/camillas/save"),HttpMethod.POST,entity,Camilla.class);
+    }
+
+
+    @Then("obtengo el estado {string} y el libro agregado tiene como tipo {string} y year {int}")
+    public void obtengo_el_estado_y_el_libro_agregado_tiene_como_tipo_y_year(String estado, String tipo, Integer year) {
+        assertEquals(estado.toUpperCase(), responseCamilla.getStatusCode().name().toString());
+
+        camilla = responseCamilla.getBody();
+
+        assertNotNull(camilla);
+        assertEquals(tipo,camilla.getTipo());
+        assertEquals(year,camilla.getYear());
+    }
+
 }
