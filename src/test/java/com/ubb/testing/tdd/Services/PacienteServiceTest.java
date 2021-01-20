@@ -1,8 +1,10 @@
 package com.ubb.testing.tdd.Services;
 
 import com.ubb.testing.tdd.Entities.Paciente;
+import com.ubb.testing.tdd.Entities.Piso;
 import com.ubb.testing.tdd.Exceptions.PacienteAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.PacienteNotFoundException;
+import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Repository.PacienteRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -120,6 +122,20 @@ public class PacienteServiceTest {
 
         assertNull(pacienteService.edit(paciente));
 
+    }
+
+    @Test
+    public void siSeInvocaDeleteByIdYExisteElPacienteDebeEliminarlo() throws PacienteNotFoundException {
+        Paciente paciente = new Paciente(1, "19.090.005-3", "Rodrigo", "Cifuentes", "Habilitado");
+        when(pacienteRepository.findById(ID_PACIENTE_FIND)).thenReturn(Optional.of(paciente));
+        pacienteService.deleteById(1);
+        verify(pacienteRepository, times(1)).deleteById(1);
+    }
+
+    @Test
+    public void siSeInvocaDeleteByIdYNoExisteElPacienteDebeLanzarPacienteNoFoundException() {
+        when(pacienteRepository.findById(ID_PACIENTE_FIND)).thenReturn(Optional.empty());
+        assertThrows(PacienteNotFoundException.class, () -> pacienteService.deleteById(ID_PACIENTE_FIND));
     }
 
 }

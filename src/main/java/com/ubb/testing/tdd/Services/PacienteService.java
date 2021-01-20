@@ -11,4 +11,6 @@ public interface PacienteService {
     Paciente save(Paciente paciente) throws PacienteNotFoundException, PacienteAlreadyExistsException;
 
     Paciente edit(Paciente paciente);
+
+    void deleteById(int id) throws PacienteNotFoundException;
 }

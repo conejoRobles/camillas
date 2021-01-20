@@ -44,4 +44,13 @@ public class PacienteServiceImpl implements PacienteService {
         return null;
 
     }
+
+    @Override
+    public void deleteById(int id) throws PacienteNotFoundException {
+        Optional<Paciente> pacienteOptional = pacienteRepository.findById(id);
+        if (pacienteOptional.isPresent())
+            pacienteRepository.deleteById(id);
+        else
+            throw new PacienteNotFoundException();
+    }
 }

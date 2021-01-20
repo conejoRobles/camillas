@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ubb.testing.tdd.Entities.Paciente;
 import com.ubb.testing.tdd.Exceptions.PacienteAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.PacienteNotFoundException;
+import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Services.PacienteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -140,5 +142,31 @@ public class PacienteControllerTest {
                 .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    void siSeInvocadeletePacienteYNoExisteElPacienteDebeLanzarStatusNotFound() throws Exception {
+        // Given
+        doThrow(new PacienteNotFoundException()).when(pacienteService).deleteById(1);
+        // When
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/paciente/deleteById/1").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(response.getContentAsString()).isEmpty();
+    }
+
+    @Test
+    void siSeInvocaDeletePacienteYExisteDebePoderEliminarlo() throws Exception {
+        // Given
+        doNothing().when(pacienteService).deleteById(1);
+        // When
+        MockHttpServletResponse response = mockMvc
+                .perform(get("/paciente/deleteById/1").accept(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getContentAsString()).isEmpty();
     }
 }

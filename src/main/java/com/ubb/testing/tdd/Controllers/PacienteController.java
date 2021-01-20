@@ -3,6 +3,7 @@ package com.ubb.testing.tdd.Controllers;
 import com.ubb.testing.tdd.Entities.Paciente;
 import com.ubb.testing.tdd.Exceptions.PacienteAlreadyExistsException;
 import com.ubb.testing.tdd.Exceptions.PacienteNotFoundException;
+import com.ubb.testing.tdd.Exceptions.PisoNotFoundException;
 import com.ubb.testing.tdd.Services.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,5 +59,15 @@ public class PacienteController {
 			}
 		}
 		return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+	}
+
+	@GetMapping("/deleteById/{id}")
+	public ResponseEntity<Void> deletePiso(@PathVariable Integer id){
+		try {
+			pacienteService.deleteById(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		}catch (PacienteNotFoundException e){
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 }
